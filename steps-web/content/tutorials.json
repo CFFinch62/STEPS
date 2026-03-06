@@ -1,0 +1,122 @@
+[
+  {
+    "id": "what-is-a-step",
+    "title": "1. What a Step Is",
+    "summary": "A playground program is one visible step named main. The web app hides the building and floor so you can focus on the core unit of work.",
+    "checklist": [
+      "Begin with step: main.",
+      "Put executable statements inside do:.",
+      "Think of one step as one small task."
+    ],
+    "recommended_example_id": "hello-world",
+    "learn_more": {
+      "label": "Read the full tutorial introduction",
+      "href": "/marketing/docs/TUTORIAL.html"
+    }
+  },
+  {
+    "id": "set-and-display",
+    "title": "2. Setting Values + Displaying Output",
+    "summary": "Most early programs use set to create values and display to show them. This is the fastest way to see how expressions behave.",
+    "checklist": [
+      "Use set to create named values.",
+      "Use display to print results one line at a time.",
+      "Convert values with as text when building messages."
+    ],
+    "recommended_example_id": "set-and-display",
+    "learn_more": {
+      "label": "Open the getting-started guide",
+      "href": "/marketing/getting-started.html"
+    }
+  },
+  {
+    "id": "making-decisions",
+    "title": "3. Making Decisions with if",
+    "summary": "Use if, otherwise if, and otherwise to choose what happens next based on a condition.",
+    "checklist": [
+      "Write the condition after if.",
+      "Indent the statements that belong to that branch.",
+      "Add otherwise for the default case."
+    ],
+    "recommended_example_id": "decision-check",
+    "learn_more": {
+      "label": "See the language reference for control flow",
+      "href": "/marketing/docs/LANGUAGE-REFERENCE.html"
+    }
+  },
+  {
+    "id": "using-loops",
+    "title": "4. Repeating with Loops",
+    "summary": "Loops help you repeat work without copying code. Start with repeat for each for lists, then move to repeat while when the loop depends on changing state.",
+    "checklist": [
+      "Use repeat for each for collections.",
+      "Use repeat while when a condition controls the loop.",
+      "Make sure the loop can eventually stop."
+    ],
+    "recommended_example_id": "loop-and-list",
+    "learn_more": {
+      "label": "Review loop syntax in the reference",
+      "href": "/marketing/docs/LANGUAGE-REFERENCE.html"
+    }
+  },
+  {
+    "id": "lists-and-tables",
+    "title": "5. Working with Lists + Tables",
+    "summary": "Lists store ordered items. Tables store named values. Both are useful for modeling small bits of data inside a single step.",
+    "checklist": [
+      "Lists use square brackets with comma-separated items.",
+      "Tables use key/value pairs such as [\"name\": \"Ada\"].",
+      "Access values with list[index] or table[\"key\"]."
+    ],
+    "recommended_example_id": "table-lookups",
+    "learn_more": {
+      "label": "Read more about data types",
+      "href": "/marketing/docs/LANGUAGE-REFERENCE.html"
+    }
+  },
+  {
+    "id": "using-risers",
+    "title": "6. Using a Riser Helper",
+    "summary": "A riser is a private helper inside your step. Use it when one part of your logic deserves its own name.",
+    "checklist": [
+      "Define the riser inside the step.",
+      "Use returns when the helper should give a value back.",
+      "Call the riser from the main do: block."
+    ],
+    "recommended_example_id": "simple-riser",
+    "learn_more": {
+      "label": "Continue to the full tutorial",
+      "href": "/marketing/docs/TUTORIAL.html"
+    }
+  },
+  {
+    "id": "taking-input",
+    "title": "7. Taking Input",
+    "summary": "The playground Input panel feeds one line at a time to input, which is enough for small interactive examples.",
+    "checklist": [
+      "Write one input value per line in the Input panel.",
+      "Use set name to input to read the next line.",
+      "Echo or transform the value to confirm what happened."
+    ],
+    "recommended_example_id": "input-echo",
+    "learn_more": {
+      "label": "See the user guide",
+      "href": "/marketing/docs/USER-GUIDE.html"
+    }
+  },
+  {
+    "id": "next-step-full-product",
+    "title": "8. Moving to Full Steps Projects",
+    "summary": "When you outgrow the playground, move to the full product for visible buildings, floors, multi-file projects, and the rest of the learning path.",
+    "checklist": [
+      "Use the playground for quick experiments.",
+      "Use the full product when you want real project structure.",
+      "Follow the marketing site and docs links below to continue."
+    ],
+    "recommended_example_id": "countdown-mini-program",
+    "learn_more": {
+      "label": "Open the install guide for the full product",
+      "href": "/marketing/getting-started.html"
+    }
+  }
+]

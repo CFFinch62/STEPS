@@ -1,0 +1,93 @@
+[
+  {
+    "id": "hello-world",
+    "title": "Hello World",
+    "description": "Smallest possible visible step.",
+    "focus_points": [
+      "Start with step: main.",
+      "Put executable work inside do:.",
+      "Use display for immediate output."
+    ],
+    "step_source": "step: main\n    do:\n        display \"Hello, World!\"\n"
+  },
+  {
+    "id": "set-and-display",
+    "title": "Set + Display",
+    "description": "Create values with set, convert them when needed, and display readable output.",
+    "focus_points": [
+      "Variables are introduced with set.",
+      "Use added to for text building.",
+      "Convert numbers with as text when displaying them in a sentence."
+    ],
+    "step_source": "step: main\n    do:\n        set learner to \"Ada\"\n        set finished_lessons to 3\n        display \"Hello, \" added to learner\n        display \"Lessons finished: \" added to (finished_lessons as text)\n"
+  },
+  {
+    "id": "decision-check",
+    "title": "If / Otherwise",
+    "description": "Branch based on a value and show a different result for each path.",
+    "focus_points": [
+      "Use if for the first condition.",
+      "Use otherwise if for extra branches.",
+      "End with otherwise for a default path."
+    ],
+    "step_source": "step: main\n    do:\n        set score to 85\n        if score is greater than or equal to 90\n            display \"Excellent\"\n        otherwise if score is greater than or equal to 70\n            display \"Passing\"\n        otherwise\n            display \"Keep practicing\"\n"
+  },
+  {
+    "id": "loop-and-list",
+    "title": "Loop Through a List",
+    "description": "Build a small list and repeat through each item.",
+    "focus_points": [
+      "Lists use square brackets.",
+      "repeat for each walks one item at a time.",
+      "Each loop can display or transform the current value."
+    ],
+    "step_source": "step: main\n    do:\n        set colors to [\"red\", \"blue\", \"green\"]\n        repeat for each color in colors\n            display \"Color: \" added to color\n"
+  },
+  {
+    "id": "table-lookups",
+    "title": "Tables + Lookups",
+    "description": "Store named values in a table and read them back by key.",
+    "focus_points": [
+      "Tables use key/value pairs.",
+      "Read a value with table[\"key\"].",
+      "Use set table[\"key\"] to add or update values."
+    ],
+    "step_source": "step: main\n    do:\n        set person to [\"name\": \"Mina\", \"age\": 12]\n        display person[\"name\"]\n        set person[\"city\"] to \"Boston\"\n        display person[\"city\"]\n"
+  },
+  {
+    "id": "simple-riser",
+    "title": "Simple Riser",
+    "description": "Use a riser to keep the main step small and readable.",
+    "focus_points": [
+      "Risers are private helpers inside the visible step.",
+      "Call a riser with call ... storing result in ... .",
+      "Return values make helpers reusable."
+    ],
+    "step_source": "step: main\n    returns: message\n\n    riser: build_message\n        returns: result\n\n        do:\n            set result to \"Hello from a riser\"\n            return result\n\n    do:\n        call build_message storing result in message\n        display message\n        return message\n"
+  },
+  {
+    "id": "input-echo",
+    "title": "Input Echo",
+    "description": "Read one line of input and display it back to the learner.",
+    "focus_points": [
+      "Use input to read one line from the Input panel.",
+      "Combine text with added to.",
+      "This pattern is useful for prompts and mini-programs."
+    ],
+    "input_lines": [
+      "Grace"
+    ],
+    "step_source": "step: main\n    do:\n        display \"What is your name?\"\n        set name to input\n        display \"Hello, \" added to name\n"
+  },
+  {
+    "id": "countdown-mini-program",
+    "title": "Countdown Mini-Program",
+    "description": "A small complete example with a variable, a while loop, and final output.",
+    "focus_points": [
+      "Use repeat while for state-based repetition.",
+      "Update the loop variable each pass.",
+      "Finish with one final message."
+    ],
+    "step_source": "step: main\n    do:\n        set countdown to 3\n        repeat while countdown is greater than 0\n            display countdown as text\n            set countdown to countdown - 1\n        display \"Go!\"\n"
+  }
+]

@@ -108,6 +108,30 @@ echo "#!/bin/bash" > "$DIST_DIR/run.sh"
 echo 'open "$(dirname "$0")/StepsIDE.app"' >> "$DIST_DIR/run.sh"
 chmod +x "$DIST_DIR/run.sh"
 
+# ── Create DMG installer ──────────────────────────────────────
+echo ""
+echo "📀 Creating DMG installer..."
+
+DMG_NAME="StepsIDE-mac-intel.dmg"
+DMG_PATH="$DIST_DIR/$DMG_NAME"
+STAGING_DIR="$BUILD_DIR/dmg_staging"
+
+# Build a clean staging folder: the .app + an Applications alias
+rm -rf "$STAGING_DIR"
+mkdir -p "$STAGING_DIR"
+cp -r "$DIST_DIR/StepsIDE.app" "$STAGING_DIR/"
+ln -s /Applications "$STAGING_DIR/Applications"
+
+# Produce a compressed, internet-ready DMG
+hdiutil create \
+    -volname "Steps IDE" \
+    -srcfolder "$STAGING_DIR" \
+    -ov \
+    -format UDZO \
+    "$DMG_PATH"
+
+echo "✓ DMG created: dist/mac-intel/$DMG_NAME"
+
 # ── Done ─────────────────────────────────────────────────────
 echo ""
 echo "============================================"
@@ -115,11 +139,11 @@ echo "  ✅ Build complete!"
 echo "============================================"
 echo ""
 echo "  🖥️  IDE app bundle : dist/mac-intel/StepsIDE.app"
+echo "  📀 DMG installer   : dist/mac-intel/$DMG_NAME"
 echo "  ⚙️  CLI interpreter: dist/mac-intel/steps"
-echo "  🚀 Quick launch   : dist/mac-intel/run.sh"
 echo ""
-echo "  To run the IDE directly:"
-echo "    open dist/mac-intel/StepsIDE.app"
+echo "  To install: open dist/mac-intel/$DMG_NAME"
+echo "              then drag StepsIDE → Applications"
 echo ""
 echo "  To install the CLI system-wide:"
 echo "    sudo cp dist/mac-intel/steps /usr/local/bin/steps"

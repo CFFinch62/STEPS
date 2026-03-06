@@ -1,0 +1,194 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+
+.hero,
+.panel {
+  background: #111827;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.hero {
+  margin: 1rem;
+}
+
+.hero h1,
+.panel h2 {
+  margin-top: 0;
+}
+
+.layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  padding: 0 1rem 1rem;
+}
+
+.controls,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.controls label {
+  flex: 1 1 220px;
+}
+
+.actions button {
+  flex: 1 1 140px;
+}
+
+textarea,
+select,
+button,
+pre {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+textarea,
+pre,
+select,
+button {
+  background: #020617;
+  color: #e2e8f0;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+button:disabled,
+select:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+a {
+  color: #93c5fd;
+}
+
+code {
+  color: #bfdbfe;
+}
+
+#editor {
+  min-height: 22rem;
+}
+
+#input-lines,
+#output,
+#diagnostics {
+  min-height: 10rem;
+}
+
+.diagnostics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.diagnostic-item {
+  background: #020617;
+  border: 1px solid #475569;
+  border-left: 4px solid #fb7185;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.diagnostic-title,
+.diagnostic-message,
+.diagnostic-meta {
+  margin: 0;
+}
+
+.diagnostic-title {
+  color: #fecdd3;
+  font-weight: 700;
+}
+
+.diagnostic-message,
+.diagnostic-meta {
+  margin-top: 0.4rem;
+}
+
+.diagnostic-message {
+  white-space: pre-wrap;
+}
+
+.diagnostic-meta {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+}
+
+.hero-links,
+.resource-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+}
+
+.meta-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.meta-list li + li {
+  margin-top: 0.35rem;
+}
+
+.subtle,
+.inline-link {
+  color: #cbd5e1;
+  margin-top: 0.75rem;
+}
+
+.status-text {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+@media (max-width: 720px) {
+  .hero,
+  .panel {
+    padding: 0.85rem;
+  }
+
+  .hero {
+    margin: 0.75rem;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 0 0.75rem 0.75rem;
+  }
+
+  .hero-links,
+  .resource-links,
+  .controls,
+  .actions {
+    flex-direction: column;
+  }
+
+  .controls label,
+  .actions button {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  #editor {
+    min-height: 16rem;
+  }
+
+  #input-lines,
+  #output,
+  #diagnostics {
+    min-height: 8rem;
+  }
+}
