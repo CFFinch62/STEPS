@@ -13,20 +13,38 @@ sys.path.insert(0, str(ROOT / "steps-web" / "backend"))
 from steps_web_backend.app import create_app
 
 
-def test_homepage_includes_learning_panels_and_links() -> None:
+def test_homepage_uses_a_single_mode_playground_layout() -> None:
     client = TestClient(create_app())
 
     response = client.get("/")
 
     assert response.status_code == 200
-    assert "What works here" in response.text
-    assert "Not available here" in response.text
-    assert "No diagnostics yet. Use Check or Run." in response.text
-    assert "Ready." in response.text
+    assert "Examples" in response.text
+    assert "Tutorials" in response.text
+    assert "Console" in response.text
+    assert "Input" in response.text
+    assert "About Steps Playground" in response.text
+    assert "About Steps Language" in response.text
+    assert "https://fragillidaesoftware.com/apps/steps/" in response.text
+    assert 'id="about-playground-dialog"' in response.text
+    assert "Ready. Use Run or Check to try the current code." in response.text
     assert 'id="request-status"' in response.text
-    assert 'id="diagnostics"' in response.text
-    assert "/marketing/" in response.text
+    assert 'id="lesson-select"' in response.text
+    assert 'id="learning-notes"' in response.text
+    assert 'id="mode-examples"' in response.text
+    assert 'id="mode-tutorials"' in response.text
+    assert 'wrap="off"' in response.text
     assert "https://github.com/CFFinch62/Steps" in response.text
+    assert 'See "About Steps Language" for full language details.' in response.text
+    assert "watching what happens" in response.text
+    assert "make something happen yourself" in response.text
+    assert "What works here" not in response.text
+    assert "Not available here" not in response.text
+    assert "Continue with full Steps" not in response.text
+    assert 'id="diagnostics"' not in response.text
+    assert 'id="example-select"' not in response.text
+    assert 'id="tutorial-select"' not in response.text
+    assert "/marketing/" not in response.text
 
 
 def test_marketing_site_is_served_from_the_playground_app() -> None:

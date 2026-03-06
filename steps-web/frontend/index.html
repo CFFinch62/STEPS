@@ -7,78 +7,77 @@
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
-    <header class="hero">
-      <h1>Steps Playground</h1>
-      <p>Write one visible <code>step: main</code>. The playground generates the building and floor for you.</p>
-      <p class="hero-links">
-        <a href="/marketing/">What is Steps?</a>
-        <a href="/marketing/getting-started.html">Install the full product</a>
-        <a href="/marketing/docs/TUTORIAL.html">Full tutorial</a>
-        <a href="https://github.com/CFFinch62/Steps" target="_blank" rel="noreferrer">GitHub</a>
-      </p>
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1>Steps Playground</h1>
+        <p>Learn core Steps ideas in the browser.</p>
+      </div>
+      <div class="topbar-actions">
+        <button id="about-playground-button" class="topbar-button" type="button">About Steps Playground</button>
+        <a class="topbar-link" href="https://fragillidaesoftware.com/apps/steps/" target="_blank" rel="noreferrer">About Steps Language</a>
+        <a class="topbar-link" href="https://github.com/CFFinch62/Steps" target="_blank" rel="noreferrer">GitHub</a>
+      </div>
     </header>
-    <main class="layout">
-      <section class="panel controls">
-        <label>Examples <select id="example-select"></select></label>
-        <label>Tutorials <select id="tutorial-select"></select></label>
-        <div class="actions">
-          <button id="run-button">Run</button>
-          <button id="check-button">Check</button>
-          <button id="reset-button">Reset</button>
-          <button id="clear-output-button">Clear Output</button>
+    <main class="playground-shell">
+      <aside class="sidebar">
+        <section class="panel control-panel">
+          <h2>Learn</h2>
+          <div class="mode-toggle" aria-label="Learning mode">
+            <button id="mode-examples" class="mode-button is-active" type="button" data-mode="examples" aria-pressed="true">Examples</button>
+            <button id="mode-tutorials" class="mode-button" type="button" data-mode="tutorials" aria-pressed="false">Tutorials</button>
+          </div>
+          <label id="lesson-label" for="lesson-select">Choose example</label>
+          <select id="lesson-select"></select>
+          <p id="request-status" class="subtle status-text" aria-live="polite">Ready.</p>
+        </section>
+        <section class="panel">
+          <h2 id="notes-title">Example Notes</h2>
+          <div id="learning-notes"></div>
+        </section>
+      </aside>
+      <section class="panel editor-panel workspace">
+        <div class="editor-toolbar">
+          <h2>Editor</h2>
+          <div class="actions">
+            <button id="run-button">Run</button>
+            <button id="check-button">Check</button>
+            <button id="reset-button">Reset</button>
+            <button id="clear-output-button">Clear Console</button>
+          </div>
         </div>
-        <p id="request-status" class="subtle status-text" aria-live="polite">Ready.</p>
+        <textarea id="editor" spellcheck="false" wrap="off"></textarea>
       </section>
-      <section class="panel"><h2>Editor</h2><textarea id="editor" spellcheck="false"></textarea></section>
-      <section class="panel">
-        <h2>Example Notes</h2>
-        <div id="example-notes"></div>
-      </section>
-      <section class="panel">
-        <h2>Tutorial Path</h2>
-        <div id="tutorial-notes"></div>
-      </section>
-      <section class="panel"><h2>Input</h2><textarea id="input-lines" spellcheck="false" placeholder="One input line per line"></textarea></section>
-      <section class="panel"><h2>Output</h2><pre id="output"></pre></section>
-      <section class="panel">
-        <h2>Diagnostics</h2>
-        <div id="diagnostics" class="diagnostics-list" aria-live="polite">
-          <p class="subtle">No diagnostics yet. Use Check or Run.</p>
-        </div>
-      </section>
-      <section class="panel">
-        <h2>What works here</h2>
-        <ul class="meta-list">
-          <li>one visible <code>step: main</code></li>
-          <li>private <code>riser:</code> helpers inside that step</li>
-          <li><code>set</code>, <code>display</code>, <code>if</code>, <code>otherwise</code>, and loops</li>
-          <li>lists, tables, text, math, and input/output basics</li>
-          <li>quick checking with <code>Check</code> and quick execution with <code>Run</code></li>
-        </ul>
-      </section>
-      <section class="panel">
-        <h2>Not available here</h2>
-        <ul class="meta-list">
-          <li>visible buildings and floors — the playground generates those for you</li>
-          <li>multi-file project structure and larger app organization</li>
-          <li>file and CSV built-ins such as <code>read_file</code> and <code>write_csv</code></li>
-          <li>browser-unfriendly terminal workflows that make more sense in the full product</li>
-        </ul>
-      </section>
-      <section class="panel">
-        <h2>Continue with full Steps</h2>
-        <div class="resource-links">
-          <a href="/marketing/">Marketing overview</a>
-          <a href="/marketing/getting-started.html">Install + getting started</a>
-          <a href="/marketing/docs/USER-GUIDE.html">User guide</a>
-          <a href="/marketing/docs/LANGUAGE-REFERENCE.html">Language reference</a>
-          <a href="/marketing/docs/TUTORIAL.html">Full tutorial</a>
-          <a href="https://github.com/CFFinch62/Steps" target="_blank" rel="noreferrer">GitHub repository</a>
-          <a href="/api/examples">Examples JSON</a>
-          <a href="/api/tutorials">Tutorials JSON</a>
-        </div>
+      <section class="output-stack">
+        <section class="panel console-panel">
+          <h2>Console</h2>
+          <pre id="output" aria-live="polite">Ready. Use Run or Check to try the current code.</pre>
+        </section>
+        <section class="panel compact-panel">
+          <h2>Input</h2>
+          <textarea id="input-lines" spellcheck="false" placeholder="One input line per line"></textarea>
+        </section>
       </section>
     </main>
+    <dialog id="about-playground-dialog" class="about-dialog">
+      <form method="dialog" class="about-dialog-form">
+        <div class="about-dialog-header">
+          <h2>About Steps Playground</h2>
+          <button id="about-playground-close" class="topbar-button" type="submit">Close</button>
+        </div>
+        <div class="about-dialog-body">
+          <p>Steps Playground is a browser-based Steps learning environment that uses a subset of the full Steps language as an introduction.</p>
+          <p>The playground focuses on one visible <code>step: main</code>, core statements, expressions, and simple <code>riser</code> helpers so you can learn the basics without full project setup.</p>
+          <h3>What is missing here</h3>
+          <ul class="meta-list">
+            <li>Visible buildings and floors</li>
+            <li>Full project structure and multi-file workflow</li>
+            <li>Some full-product and non-browser-friendly features</li>
+            <li>See "About Steps Language" for full language details.</li>
+          </ul><br>
+          <p class="section-gap"><strong>Examples</strong> are intended for watching what happens. <strong>Tutorials</strong> are intended to help you change code and make something happen yourself.</p>
+        </div>
+      </form>
+    </dialog>
     <script src="/app.js" defer></script>
   </body>
 </html>

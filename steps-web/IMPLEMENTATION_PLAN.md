@@ -489,7 +489,7 @@ Use this section as the running project status area for future sessions.
 - [x] Frontend MVP working
 - [x] Initial examples loaded
 - [x] Initial tutorials loaded
-- [ ] First deploy completed
+- [x] First deploy completed
 
 ### Latest completed work
 
@@ -516,6 +516,16 @@ Use this section as the running project status area for future sessions.
 - [x] Reduced editor/output panel heights and tightened spacing for narrower screens
 - [x] Added Markdown deployment instructions for the current source-based hosting shape
 - [x] Added a Render-specific manual deployment guide for handoff and post-deploy testing
+- [x] Completed the first Render deployment of the playground service
+- [x] Simplified the homepage to a single Examples/Tutorials mode toggle with one lesson selector and one notes panel
+- [x] Replaced the separate output/diagnostics presentation with one shared console and moved input beneath it
+- [x] Enlarged the editor, disabled code wrapping, and removed homepage full-product/tutorial upsell clutter
+- [x] Updated homepage regression coverage for the simplified single-selector, single-console layout
+- [x] Compressed the desktop layout into three columns so Learn, Editor, Console, and Input fit on one page without vertical scrolling
+- [x] Replaced the large header card with a compact top bar to keep the playground near the page edges
+- [x] Added an About Steps Playground dialog and an About Steps Language link in the top bar
+- [x] Corrected the About Steps Language URL and refined the About Steps Playground dialog copy/spacing
+- [x] Rebalanced the desktop column widths so the editor is narrower and the console/input column is wider
 
 ### Next-session checklist
 
@@ -551,6 +561,11 @@ At the start of a new dev session:
 - [x] Playground disables file/CSV built-ins (`read_file`, `write_file`, `append_file`, `file_exists`, `read_csv`, `write_csv`)
 - [x] Initial deployment target is Render
 - [x] Initial deployment will run from source with `PYTHONPATH=src:steps-web/backend` to avoid installing desktop IDE dependencies on the server
+- [x] Playground homepage should default to Examples mode
+- [x] Playground homepage should use a single Examples/Tutorials toggle, one shared notes panel, and one console for both output and errors
+- [x] Playground homepage should keep only the GitHub link and avoid full-product/tutorial upsell clutter
+- [x] Desktop layout should place Learn/Notes on the left, Editor in the center, and Console/Input on the right without page scrolling on a normal desktop screen
+- [x] Top bar should include an About Steps Playground dialog and an external About Steps Language link to `https://fragillidaesoftware.com/apps/steps/`
 
 ### Open decisions
 
@@ -577,8 +592,8 @@ At the start of a new dev session:
 
 ## 17. Recommended Immediate Next Steps
 
-1. Deploy the current `steps-web` service to Render and record the public URL.
-2. Smoke test the public Render flow end-to-end after first deploy.
+1. Review the compact three-column layout locally in the browser and confirm it fits on one desktop page without vertical scrolling.
+2. If the compact layout looks right locally, push it and smoke test the public Render flow end-to-end.
 3. Revisit whether additional browser-unfriendly built-ins should be restricted.
 4. Decide whether the web backend should later move under `src/` for cleaner packaging.
 5. Decide whether example/tutorial selection should also persist locally, or only the editor source.
