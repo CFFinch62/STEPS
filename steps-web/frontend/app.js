@@ -13,7 +13,7 @@ const NOTES_TITLES = {
   tutorials: "Tutorial Notes",
 };
 
-const editor = document.getElementById("editor");
+const editorElement = document.getElementById("editor");
 const inputLines = document.getElementById("input-lines");
 const output = document.getElementById("output");
 const lessonSelect = document.getElementById("lesson-select");
@@ -42,8 +42,8 @@ let currentSelections = {
   examples: "",
   tutorials: "",
 };
-
-editor.value = loadStoredText(EDITOR_STORAGE_KEY) || defaultSource;
+let editor = null;
+const initialEditorSource = loadStoredText(EDITOR_STORAGE_KEY) || defaultSource;
 
 async function fetchJson(url) {
   const response = await fetch(url);
@@ -67,8 +67,16 @@ function saveStoredText(key, value) {
   }
 }
 
+function getEditorValue() {
+  return editor ? editor.getValue() : initialEditorSource;
+}
+
+function setEditorValue(value) {
+  if (editor) editor.setValue(value || "");
+}
+
 function persistEditorSource() {
-  saveStoredText(EDITOR_STORAGE_KEY, editor.value);
+  saveStoredText(EDITOR_STORAGE_KEY, getEditorValue());
 }
 
 function clearContainer(node) {
@@ -178,7 +186,7 @@ function syncCurrentSelection(resetInput, preserveEditor = false) {
   const starter = getStarterExample();
 
   if (!preserveEditor) {
-    editor.value = starter?.step_source || defaultSource;
+    setEditorValue(starter?.step_source || defaultSource);
     persistEditorSource();
   }
 
@@ -250,7 +258,7 @@ function setRequestState(isBusy, statusMessage = "Ready.", activeButton = null) 
 
 function requestPayload() {
   return {
-    step_source: editor.value,
+    step_source: getEditorValue(),
     input_lines: inputLines.value ? inputLines.value.split("\n") : [],
     include_wrapper: false,
   };
@@ -277,8 +285,6 @@ function closeAboutPlaygroundDialog() {
 
   aboutPlaygroundDialog.removeAttribute("open");
 }
-
-editor.addEventListener("input", persistEditorSource);
 
 lessonSelect.addEventListener("change", () => syncCurrentSelection(true));
 
@@ -385,7 +391,43 @@ async function loadContent() {
   setRequestState(false, "Ready.");
 }
 
-loadContent().catch((error) => {
-  setRequestState(false, "Starter content unavailable.");
-  renderConsole({ diagnostics: [{ code: "WEB001", message: `Failed to load starter content: ${error.message}` }] });
-});
+setRequestState(true, "Loading editor...");
+
+window.initApp = async function initApp(monaco) {
+  if (typeof window.registerStepsLanguage !== "function") {
+    throw new Error("Steps language definition did not load.");
+  }
+
+  window.registerStepsLanguage(monaco);
+  editor = monaco.editor.create(editorElement, {
+    value: initialEditorSource,
+    language: "steps",
+    theme: "steps-dark",
+    autoIndent: "full",
+    fontSize: 14,
+    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace",
+    minimap: { enabled: false },
+    scrollBeyondLastLine: false,
+    automaticLayout: true,
+    lineNumbers: "on",
+    tabSize: 4,
+    insertSpaces: true,
+    wordWrap: "off",
+    wrappingIndent: "none",
+    renderLineHighlight: "line",
+  });
+
+  editor.onDidChangeModelContent(persistEditorSource);
+  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+    if (!isRequestInFlight) {
+      callApi("/api/run", "Running", runButton, "Program finished with no output.");
+    }
+  });
+
+  try {
+    await loadContent();
+  } catch (error) {
+    setRequestState(false, "Starter content unavailable.");
+    renderConsole({ diagnostics: [{ code: "WEB001", message: `Failed to load starter content: ${error.message}` }] });
+  }
+};

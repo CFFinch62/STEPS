@@ -45,7 +45,7 @@
             <button id="clear-output-button">Clear Console</button>
           </div>
         </div>
-        <textarea id="editor" spellcheck="false" wrap="off"></textarea>
+        <div id="editor" aria-label="Steps editor"></div>
       </section>
       <section class="output-stack">
         <section class="panel console-panel">
@@ -78,6 +78,19 @@
         </div>
       </form>
     </dialog>
-    <script src="/app.js" defer></script>
+    <script src="/steps-lang.js"></script>
+    <script src="/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"
+      onerror="document.getElementById('request-status').textContent='Editor failed to load.'; document.getElementById('output').textContent='Could not load Monaco from CDN. Check your internet connection.';"></script>
+    <script>
+      require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs" } });
+
+      require(["vs/editor/editor.main"], function () {
+        window.initApp(monaco).catch(function (error) {
+          document.getElementById("request-status").textContent = "Editor unavailable.";
+          document.getElementById("output").textContent = "Failed to initialize editor: " + error.message;
+        });
+      });
+    </script>
   </body>
 </html>

@@ -33,7 +33,11 @@ def test_homepage_uses_a_single_mode_playground_layout() -> None:
     assert 'id="learning-notes"' in response.text
     assert 'id="mode-examples"' in response.text
     assert 'id="mode-tutorials"' in response.text
-    assert 'wrap="off"' in response.text
+    assert 'id="editor"' in response.text
+    assert 'aria-label="Steps editor"' in response.text
+    assert "/steps-lang.js" in response.text
+    assert "monaco-editor@0.44.0/min/vs/loader.js" in response.text
+    assert 'wrap="off"' not in response.text
     assert "https://github.com/CFFinch62/Steps" in response.text
     assert 'See "About Steps Language" for full language details.' in response.text
     assert "watching what happens" in response.text

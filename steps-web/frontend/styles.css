@@ -226,13 +226,15 @@ code {
 #editor {
   flex: 1 1 auto;
   min-height: 0;
-  line-height: 1.45;
-  resize: none;
-  overflow: auto;
-  white-space: pre;
-  overflow-wrap: normal;
-  word-break: normal;
-  tab-size: 4;
+  overflow: hidden;
+  border: 1px solid #475569;
+  border-radius: 10px;
+  background: #020617;
+}
+
+#editor .monaco-editor,
+#editor .overflow-guard {
+  border-radius: inherit;
 }
 
 #output {
