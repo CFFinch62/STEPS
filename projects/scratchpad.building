@@ -1,3 +1,5 @@
 building: scratchpad
 
-    call divider with "Project Euler — Steps", 52
+    display("Welcome to Steps!")
+    display("")
+    display("Steps is programming languages designed for beginning programmers.")

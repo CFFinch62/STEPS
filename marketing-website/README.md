@@ -197,7 +197,7 @@ Simply open `index.html` in a web browser to view the site locally. All pages ar
 1. Create `gh-pages` branch or use docs folder
 2. Copy marketing-website contents
 3. Enable GitHub Pages in repository settings
-4. Site will be available at `https://username.github.io/Steps/`
+4. Site will be available at `https://CFFinch62.github.io/Steps/`
 
 ## Maintenance
 

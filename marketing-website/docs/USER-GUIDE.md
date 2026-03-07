@@ -47,7 +47,7 @@ Steps is designed to teach programming concepts through an architectural metapho
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/CFFinch62/Steps
 cd Steps
 
 # Create a virtual environment (recommended)

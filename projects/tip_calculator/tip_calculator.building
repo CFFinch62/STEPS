@@ -1,16 +1,23 @@
 building: tip_calculator
     note: Calculate tip and total for a restaurant bill
+    
     display "Welcome to Tip Calculator!"
     display ""
+    
     display "Enter bill amount: $"
     set bill_amount to input as number
+    
     display "Enter tip percentage (e.g., 15, 18, 20): "
     set tip_percent to input as number
+    
     call calculate_tip with bill_amount, tip_percent storing result in tip_amount
+    
     set total to bill_amount + tip_amount
+    
     display ""
     display "Bill:  $" added to (bill_amount as text)
     display "Tip:   $" added to (tip_amount as text)
     display "Total: $" added to (total as text)
-    exit
     
+    exit
+    123.12

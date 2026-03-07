@@ -195,13 +195,19 @@
 
     <section class="feature-detail">
         <div class="container">
-            <div class="feature-row">
-                <div class="feature-text">
-                    <h2>🛠️ Professional-Grade IDE</h2>
-                    <p class="feature-lead">A modern GUI development environment built for learning</p>
-                    <p>Steps includes a full-featured graphical IDE that looks and feels like professional tools, giving
-                        students real-world development experience.</p>
+            <div class="ide-header" style="text-align: center; margin-bottom: var(--spacing-lg);">
+                <h2>🛠️ Professional-Grade IDE</h2>
+                <p class="feature-lead">A modern GUI development environment built for learning</p>
+                <p>Steps includes a full-featured graphical IDE that looks and feels like professional tools, giving
+                    students real-world development experience.</p>
+            </div>
 
+            <div class="ide-visual" style="margin-bottom: var(--spacing-xl);">
+                <img src="images/StepsIDE.png" alt="Steps IDE Interface with syntax highlighting and integrated debugger" class="feature-screenshot">
+            </div>
+
+            <div class="ide-features-grid">
+                <div class="ide-feature">
                     <h3>Modern GUI Interface</h3>
                     <p>Built with PyQt6 for a native, responsive experience.</p>
                     <ul class="feature-list">
@@ -210,7 +216,9 @@
                         <li>Configurable themes (11 built-in themes)</li>
                         <li>Resizable, dockable panels</li>
                     </ul>
+                </div>
 
+                <div class="ide-feature">
                     <h3>VS Code-Style Integrated Terminal</h3>
                     <p>A real terminal experience, not just output display.</p>
                     <ul class="feature-list">
@@ -219,7 +227,9 @@
                         <li>Auto-syncs with project directory</li>
                         <li>Interactive input for Steps programs</li>
                     </ul>
+                </div>
 
+                <div class="ide-feature">
                     <h3>Full Stepping Debugger</h3>
                     <p>Professional debugging capabilities for learning.</p>
                     <ul class="feature-list">
@@ -228,7 +238,9 @@
                         <li><strong>Variable Watch</strong> - See values change in real-time</li>
                         <li><strong>Call Stack</strong> - Trace step and riser calls</li>
                     </ul>
+                </div>
 
+                <div class="ide-feature">
                     <h3>Command-Line Tools</h3>
                     <p>Professional development workflow from day one.</p>
                     <ul class="feature-list">
@@ -236,33 +248,6 @@
                         <li><code>check</code> - Validate syntax without running</li>
                         <li><code>diagram</code> - Generate program flow diagrams</li>
                     </ul>
-                </div>
-                <div class="feature-visual">
-                    <div class="code-window">
-                        <div class="code-header">
-                            <span class="code-dot"></span>
-                            <span class="code-dot"></span>
-                            <span class="code-dot"></span>
-                            <span class="code-title">Steps IDE - Debugger</span>
-                        </div>
-                        <pre class="code-content"><code>🔴 Breakpoint at line 5
-
-<span class="keyword">Variables</span>
-┌─────────────────────────┐
-│ 🌐 Globals              │
-│   name = "Alice"        │
-│   <span class="highlight">age = 25</span>              │
-│   is_student = true     │
-└─────────────────────────┘
-
-<span class="keyword">Call Stack</span>
-┌─────────────────────────┐
-│ calculate_grade (ln 12) │
-│ └ main (ln 5)           │
-└─────────────────────────┘
-
-[F11 Step Into] [F10 Step Over]</code></pre>
-                    </div>
                 </div>
             </div>
         </div>
