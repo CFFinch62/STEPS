@@ -1,0 +1,53 @@
+step: display_code_text06
+    
+    belongs to: menu_helpers
+    expects: nothing
+    returns: nothing  
+            
+    do:
+        clear console
+        
+        display("note: =========================================")
+        display("note: CODE FOR PROBLEM_06")
+        display("note: =========================================")
+        display("step: problem_06")
+        display("")
+        display("    belongs to: solutions")
+        display("    expects: nothing")
+        display("    returns: nothing")
+        display("      ")
+        display("    declare:")
+        display("        i as number")
+        display("        sum as number")
+        display("        sumsq as number")
+        display("        diff as number")
+        display("        ")
+        display("    do:")
+        display("        set i to 1")
+        display("        set sum to 0")
+        display("        set sumsq to 0")
+        display("        set diff to 0")
+        display("        ")
+        display("        call time storing result in start")
+        display("    ")
+        display("        repeat while i is less than or equal to 100")
+        display("            set sumsq to sumsq + (i * i)")
+        display("            set sum to sum + i")
+        display("            set i to i + 1")
+        display("        set sqsum to sum * sum")
+        display("        ")
+        display("        call abs with (sumsq - sqsum) storing result in diff")
+        display("")
+        display("        display(\"###################################\")")
+        display("        display(\"PROJECT EULER PROBLEM 6\")")
+        display("        display(\"###################################\") ")
+        display("        display(\"Find the difference between the sum\")")
+        display("        display(\"of the squares of the first one hundred\")")
+        display("        display(\"natural numbers and the square of the sum.\")")
+        display("        display(\"\") ")
+        display("        display(\"The difference is: \" added to diff)")
+        display("        display(\"###################################\")")
+        display(" ")
+        display("        call time storing result in finish")
+        display("        set elapsed to (finish - start)")
+        display("        display(\"Prosessing time: \" added to elapsed as text added to \" seconds.\")") 

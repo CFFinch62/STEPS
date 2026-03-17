@@ -1,0 +1,26 @@
+step: fib_even_sum
+
+    belongs to: solution_helpers
+    expects: max
+    returns: even_total
+
+    declare:
+        fsum as number
+        first as number
+        second as number
+        even_total as number 
+    
+    do: 
+        set fsum to 0
+        set first to 1
+        set second to 2
+        set even_total to 2
+        
+        repeat while fsum is less than max
+            set fsum to first + second
+            if fsum % 2 equals 0
+                set even_total to even_total + fsum
+            set first to second
+            set second to fsum
+                        
+        return even_total

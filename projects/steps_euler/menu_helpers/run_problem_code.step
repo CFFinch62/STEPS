@@ -1,0 +1,31 @@
+step: run_problem_code
+    
+    belongs to: menu_helpers
+    expects: problem
+    returns: nothing  
+            
+    do:
+        clear console
+            
+        if problem equals "1" 
+            call problem_01
+        otherwise if problem equals "2" 
+            call problem_02
+        otherwise if problem equals "3" 
+            call problem_03 
+        otherwise if problem equals "4"
+            call problem_04
+        otherwise if problem equals "5"
+            call problem_05
+        otherwise if problem equals "6" 
+            call problem_06
+        otherwise if problem equals "7" 
+            call problem_07
+        otherwise if problem equals "8" 
+            call problem_08
+        otherwise if problem equals "9"
+            call problem_09
+        otherwise if problem equals "10"
+            call problem_10
+        otherwise
+            display "Invalid Selection!" 

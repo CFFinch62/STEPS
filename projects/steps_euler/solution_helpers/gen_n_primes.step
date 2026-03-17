@@ -1,0 +1,48 @@
+step: gen_n_primes
+    belongs to: solution_helpers
+    expects: count as number
+    returns: primes as list
+
+    riser: is_prime
+        expects: num as number
+        returns: valid as boolean
+
+        declare:
+            divisor as number
+            root as number
+            whole as number
+
+        do:
+            if num is less than 2
+                set valid to false
+                return valid
+
+            call sqrt with num storing result in root
+            call round with root storing result in whole
+
+            set divisor to 2
+            repeat while divisor is less than or equal to whole
+                if (num % divisor) equals 0
+                    set valid to false
+                    return valid
+                set divisor to divisor + 1
+
+            set valid to true
+            return valid
+
+    declare:
+        primes as list
+        candidate as number
+        prime_found as boolean
+
+    do:
+        set primes to []
+        set candidate to 2
+
+        repeat while length of primes is less than count
+            call is_prime with candidate storing result in prime_found
+            if prime_found equals true
+                add candidate to primes
+            set candidate to candidate + 1
+
+        return primes

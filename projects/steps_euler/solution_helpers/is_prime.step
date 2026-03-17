@@ -1,0 +1,29 @@
+step: is_prime
+
+    belongs to: solution_helpers
+    expects: num
+    returns: valid 
+
+    declare:
+        count as number
+        root as number
+        max as number
+        valid as boolean
+        
+    do:
+        set count to 3
+
+        call sqrt with num storing result in root
+        call round with root storing result in max
+
+        if num is less than 2
+            set valid to false
+            return valid
+        repeat while count is less than or equal to max
+            if (num % count) equals 0
+                set valid to false
+                return valid
+            set count to count + 2
+
+        set valid to true
+        return valid

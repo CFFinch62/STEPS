@@ -1,0 +1,30 @@
+step: gpf
+
+    belongs to: solution_helpers
+    expects: max
+    returns: largest
+
+    declare:
+        n as number
+        factor as number
+
+    do:
+        note: Trial division - divide n down as factors are found.
+        note: Any factor found this way must be prime since all smaller
+        note: factors have already been divided out. No is_prime needed.
+        note: Runs in ~sqrt(n) iterations vs ~n*sqrt(n) for the naive approach.
+
+        set largest to 1
+        set n to max
+        set factor to 2
+
+        repeat while (factor * factor) is less than or equal to n
+            repeat while (n % factor) equals 0
+                set largest to factor
+                set n to n / factor
+            set factor to factor + 1
+
+        if n is greater than 1
+            set largest to n
+
+        return largest

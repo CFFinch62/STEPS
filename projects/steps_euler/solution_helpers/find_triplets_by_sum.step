@@ -1,0 +1,42 @@
+step: find_triplets_by_sum
+    
+    belongs to: solution_helpers
+    expects: sum
+    returns: triplets
+    
+    declare:
+        max as number
+        a as number
+        num as number
+        den as number
+        b as number
+        b_int as number
+        c as number
+        triplet as list
+        
+           
+    do:             
+        note: S/3 is the mathematical limit for 'a' because a < b < c
+        note: We use a simple loop. Each 'a' is a float (e.g., 1.0, 2.0...)
+        set max to sum / 3 
+        set a to 1.0
+        set triplets to []
+        
+        repeat while a is less than max
+            note: b = (S^2 - 2Sa) / (2S - 2a)
+            set num to (sum * sum) - (2.0 * sum * a)
+            set den to (2.0 * sum) - (2.0 * a)
+            
+            set b to num / den
+            call round with (num / den) storing result in b_int
+        
+            note: Check if b is an "integer" in Steps
+            note: We do this by comparing b to its rounded-down version
+            if b equals b_int 
+                set c to sum - a - b
+                set triplet to [a, b, c]
+                add triplet to triplets 
+        
+            set a to a + 1.0
+            
+        return triplets

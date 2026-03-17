@@ -1,0 +1,52 @@
+step: gen_primes_to_n
+
+    belongs to: solution_helpers
+    expects: n as number
+    returns: primes as list
+
+    riser: build_sieve
+        expects: size as number
+        returns: primes_sieve as list
+
+        declare:
+            primes_sieve as list
+
+        do:
+            note: create_list is a native builtin - allocates at C speed,
+            note: replacing a 2,000,000-iteration interpreted loop with one call.
+            call create_list with size + 1, true storing result in primes_sieve
+            return primes_sieve
+
+    declare:
+        sieve as list
+        primes as list
+        i as number
+        multiple as number
+        root as number
+        whole as number
+
+    do:
+        call build_sieve with n storing result in sieve
+        set sieve[0] to false
+        set sieve[1] to false
+
+        call sqrt with n storing result in root
+        call round with root storing result in whole
+
+        set i to 2
+        repeat while i is less than or equal to whole
+            if sieve[i] equals true
+                set multiple to i * i
+                repeat while multiple is less than or equal to n
+                    set sieve[multiple] to false
+                    set multiple to multiple + i
+            set i to i + 1
+
+        set primes to []
+        set i to 0
+        repeat while i is less than or equal to n
+            if sieve[i] equals true
+                add i to primes
+            set i to i + 1
+
+        return primes

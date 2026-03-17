@@ -1,0 +1,22 @@
+step: lcm 
+
+    belongs to: solution_helpers
+    expects: n1, n2
+    returns: least_cm
+    
+    declare:
+        num1 as number
+        num2 as number
+        tmp as number
+        least as number
+
+    do:    
+        set num1 to n1
+        set num2 to n2
+        set tmp to 0
+        
+        call gcd with num1, num2 storing result in tmp
+        
+        set least to (num1 * num2) / tmp 
+         
+        return least

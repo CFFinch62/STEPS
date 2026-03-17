@@ -1,4 +1,4 @@
-step: problem_001
+step: problem_01
     belongs to: solutions
     expects: nothing
     returns: nothing

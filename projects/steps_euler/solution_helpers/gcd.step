@@ -1,0 +1,22 @@
+step: gcd
+
+    belongs to: solution_helpers
+    expects: n1, n2
+    returns: num1
+    
+    declare:
+        tmp as number
+        num1 as number
+        num2 as number
+        
+    do:    
+        set tmp to 0
+        set num1 to n1
+        set num2 to n2   
+
+        repeat while num2 is greater than 0
+            set tmp to num1 % num2
+            set num1 to num2
+            set num2 to tmp
+
+        return num1

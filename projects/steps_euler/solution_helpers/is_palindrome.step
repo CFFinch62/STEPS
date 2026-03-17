@@ -1,0 +1,49 @@
+step: is_palindrome
+
+    belongs to: solution_helpers
+    expects: value
+    returns: valid
+    
+    declare:
+        text_value as text
+        valid as boolean
+        len as number
+        int_len as number
+        count as number
+        char_left as text
+        char_right as text
+        
+    do:
+        set text_value to ""
+        set count to 0
+    
+        note: Determine the string representation based on type
+        if value is a number
+            set text_value to value as text
+        otherwise
+            if value is a text
+                set text_value to value
+            otherwise
+                set valid to false
+                return valid
+          
+        note: Now begin to check if text_value is a palindrome
+        set len to length of text_value
+        call round with (len / 2) storing result in int_len
+    
+        note: Handle edge case
+        if len is less than or equal to 1
+            set valid to true
+            return valid
+    
+        note: Compare characters from both ends
+        repeat while count is less than or equal to int_len - 1
+            call slice with text_value, count, count + 1 storing result in char_left
+            call slice with text_value, (int_len - 1) - count, int_len - count storing result in char_right
+        
+            if char_left is not equal to char_right
+                set valid to false
+                return valid
+    
+        set valid to true
+        return valid

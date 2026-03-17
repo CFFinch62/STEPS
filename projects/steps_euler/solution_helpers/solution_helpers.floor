@@ -1,0 +1,12 @@
+floor: solution_helpers
+    step: fib_even_sum
+    step: find_triplets_by_sum
+    step: gcd
+    step: gen_n_primes
+    step: gen_primes_to_n
+    step: gpf
+    step: is_palindrome
+    step: is_prime
+    step: lcm
+    step: max_adjacent_product
+    step: sum_of_two_multiples

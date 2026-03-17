@@ -1,0 +1,43 @@
+building: project_euler
+    set main_menu_items to ["Run a Solution","Display Solution Code"]
+    set running to true
+    
+    clear console
+
+    repeat while running
+        note: Draw menu banner
+        call banner with "Project Euler for STEPS", 80 storing result in header
+        display header
+    
+        note: Draw solution status
+        call box with "Solutions to Problems 1-10 are available.", 80 storing result in status
+        display status
+         
+        note: Draw app main menu
+        call menu with main_menu_items
+        display ("")
+        indicate " Enter desired action (0 to quit): "
+        set choice to input
+        display ("")
+
+        if choice equals "0"
+            set running to false
+            
+        otherwise if choice equals "1"
+            indicate " What problem (1-10) would you like to run: "
+            set problem to input
+            call run_problem_code with problem
+
+        otherwise if choice equals "2"
+            indicate " What problem code (1-10) would you like to view: "
+            set problem to input
+            call display_problem_code with problem
+            
+        otherwise
+            display ("Invalid choice...try again!")
+        
+        display ("Press ENTER to continue...")
+        set dummy to input
+        
+        clear console    
+    exit

@@ -1,0 +1,44 @@
+step: max_adjacent_product
+
+    belongs to: solution_helpers
+    expects: digit_string as text, window_size as number
+    returns: best as number
+    
+    declare:
+        cnt as number
+        max as number
+        best as number
+        tmp as number
+        window as text
+        zero_pos as number
+        digit_list as list
+        i as number
+        searching as boolean
+    
+    do:
+        set best to 0
+        set cnt to 0
+        set max to (length of digit_string - window_size)
+        set searching to true
+    
+        repeat while searching
+            call slice with digit_string, cnt, cnt + window_size storing result in window
+            call index_of with window, "0" storing result in zero_pos
+    
+            if zero_pos is equal to -1
+                set tmp to 1
+                set i to 0
+                call characters with window storing result in digit_list
+                repeat while i is less than window_size
+                    set tmp to tmp * digit_list[i] as number
+                    set i to i + 1
+                if tmp is greater than best
+                    set best to tmp
+                set cnt to cnt + 1
+            otherwise
+                set cnt to cnt + zero_pos + 1
+    
+            if cnt is greater than max
+                set searching to false
+    
+        return best

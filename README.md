@@ -1,29 +1,31 @@
-# Steps Programming Language
+# STEPS Programming Language
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-364%20passing-green.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-![Steps IDE Screenshot](images/StepsIDE.png)
+![STEPS IDE Screenshot](images/STEPSIDE.png)
 
 > **An educational programming language that makes program structure visible and mandatory.**
 
-Steps teaches programming through an architectural metaphor, enforcing decomposition and clear structure from day one.
+STEPS teaches programming through an architectural metaphor, enforcing decomposition and clear structure from day one. STEPS is the first of 3 teaching labugaes crreated by Fragillidae Software. The others are PLAIN (general purpose scripting lanauge like a mix if Python and Go) and FORGE(statically types system programming language with easier beginer entry than C).
+
+
 
 ---
 
 ## 🏗️ The Building Metaphor
 
-Steps uses architecture to make program structure explicit and visible:
+STEPS uses architecture to make program structure explicit and visible:
 
-| Construct | Purpose | File Extension |
-|-----------|---------|----------------|
-| **Building** | Complete program (entry point) | `.building` |
-| **Floor** | Functional grouping of related steps | `.floor` |
-| **Step** | Single unit of work (one file per step) | `.step` |
-| **Riser** | Private helper function within a step | (inside .step) |
+| Construct    | Purpose                                 | File Extension |
+| ------------ | --------------------------------------- | -------------- |
+| **Building** | Complete program (entry point)          | `.building`    |
+| **Floor**    | Functional grouping of related STEPS    | `.floor`       |
+| **Step**     | Single unit of work (one file per step) | `.step`        |
+| **Riser**    | Private helper function within a step   | (inside .step) |
 
-This hierarchy enforces decomposition - you can't write monolithic code in Steps!
+This hierarchy enforces decomposition - you can't write monolithic code in STEPS!
 
 ---
 
@@ -34,7 +36,7 @@ This hierarchy enforces decomposition - you can't write monolithic code in Steps
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd Steps
+cd STEPS
 
 # Create virtual environment
 python3 -m venv venv
@@ -61,7 +63,7 @@ hello_world/
 ```
 
 In `hello_world.building`:
-```steps
+```STEPS
 building: hello_world
     display "Hello, World!"
     exit
@@ -70,31 +72,31 @@ building: hello_world
 ### 2. Run Your Program
 
 ```bash
-python -m steps.main run hello_world/
+python -m STEPS.main run hello_world/
 ```
 
 ### 3. Or Use the Interactive REPL
 
 ```bash
-python -m steps_repl.main
+python -m STEPS_repl.main
 ```
 
 ```
-Steps REPL v0.1 - Educational Programming Environment
+STEPS REPL v0.1 - Educational Programming Environment
 Type 'help' for available commands, 'exit' to quit.
 
->>> set greeting to "Hello, Steps!"
+>>> set greeting to "Hello, STEPS!"
 >>> display greeting
-Hello, Steps!
+Hello, STEPS!
 >>> vars
 Variables:
-  greeting = "Hello, Steps!"
+  greeting = "Hello, STEPS!"
 ```
 
-### 4. Launch the Steps IDE
+### 4. Launch the STEPS IDE
 
 ```bash
-python -m steps_ide.main
+python -m STEPS_ide.main
 ```
 
 The IDE provides a full development environment with:
@@ -109,7 +111,7 @@ The IDE provides a full development environment with:
 
 ## 📚 A Complete Example
 
-Here's a more complete program with floors and steps:
+Here's a more complete program with floors and STEPS:
 
 ```
 price_calculator/
@@ -121,7 +123,7 @@ price_calculator/
 ```
 
 **price_calculator.building:**
-```steps
+```STEPS
 building: price_calculator
     note: Calculate the final price with discount
 
@@ -146,14 +148,14 @@ building: price_calculator
 ```
 
 **calculations/calculations.floor:**
-```steps
+```STEPS
 floor: calculations
     step: calculate_subtotal
     step: apply_discount
 ```
 
 **calculations/calculate_subtotal.step:**
-```steps
+```STEPS
 step: calculate_subtotal
     belongs to: calculations
     expects: price, quantity
@@ -165,7 +167,7 @@ step: calculate_subtotal
 ```
 
 **calculations/apply_discount.step:**
-```steps
+```STEPS
 step: apply_discount
     belongs to: calculations
     expects: amount, percent
@@ -184,24 +186,24 @@ step: apply_discount
 
 ## 🛠️ CLI Commands
 
-| Command | Description |
-|---------|-------------|
-| `python -m steps.main run <path>` | Run a Steps project |
-| `python -m steps.main check <path>` | Validate syntax without running |
-| `python -m steps.main repl` | Start the interactive REPL |
-| `python -m steps.main diagram <path>` | Generate ASCII flow diagram (also available in IDE with Ctrl+D) |
-| `python -m steps_repl.main` | Start REPL directly |
-| `python -m steps_ide.main` | Launch the Steps IDE |
+| Command                               | Description                                                     |
+| ------------------------------------- | --------------------------------------------------------------- |
+| `python -m STEPS.main run <path>`     | Run a STEPS project                                             |
+| `python -m STEPS.main check <path>`   | Validate syntax without running                                 |
+| `python -m STEPS.main repl`           | Start the interactive REPL                                      |
+| `python -m STEPS.main diagram <path>` | Generate ASCII flow diagram (also available in IDE with Ctrl+D) |
+| `python -m STEPS_repl.main`           | Start REPL directly                                             |
+| `python -m STEPS_ide.main`            | Launch the STEPS IDE                                            |
 
 ---
 
 ## 📖 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [USER-GUIDE.md](USER-GUIDE.md) | Getting started guide for users |
-| [LANGUAGE-REFERENCE.md](LANGUAGE-REFERENCE.md) | Complete language reference |
-| [dev-docs/](dev-docs/) | Developer documentation |
+| Document                                       | Description                     |
+| ---------------------------------------------- | ------------------------------- |
+| [USER-GUIDE.md](USER-GUIDE.md)                 | Getting started guide for users |
+| [LANGUAGE-REFERENCE.md](LANGUAGE-REFERENCE.md) | Complete language reference     |
+| [dev-docs/](dev-docs/)                         | Developer documentation         |
 
 ### Developer Documentation (dev-docs/)
 
@@ -230,28 +232,28 @@ pytest tests/unit/test_lexer.py
 ### With Coverage
 
 ```bash
-pytest --cov=steps --cov-report=html
+pytest --cov=STEPS --cov-report=html
 ```
 
 ### Type Checking
 
 ```bash
-mypy src/steps src/steps_repl --ignore-missing-imports
+mypy src/STEPS src/STEPS_repl --ignore-missing-imports
 ```
 
 ### Project Structure
 
 ```
-Steps/
+STEPS/
 ├── src/
-│   ├── steps/           # Core interpreter
+│   ├── STEPS/           # Core interpreter
 │   │   ├── lexer.py     # Tokenization
 │   │   ├── parser.py    # AST construction
 │   │   ├── interpreter.py  # Execution engine
 │   │   ├── environment.py  # Scopes and registry
 │   │   └── ...
-│   ├── steps_repl/      # Interactive REPL
-│   └── steps_ide/       # TUI-based IDE
+│   ├── STEPS_repl/      # Interactive REPL
+│   └── STEPS_ide/       # TUI-based IDE
 ├── tests/
 │   ├── unit/            # Unit tests
 │   └── integration/     # Integration tests
