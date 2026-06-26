@@ -101,7 +101,7 @@ python -m STEPS_ide.main
 
 The IDE provides a full development environment with:
 - Project browser (Ctrl+Shift+P)
-- Syntax-aware editor
+- Syntax-aware editor with code completion (Ctrl+Space or automatic)
 - Run (F5) and Check (F6) commands
 - Terminal output panel (Ctrl+J)
 - Project diagram viewer (Ctrl+D)

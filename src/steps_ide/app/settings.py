@@ -34,6 +34,8 @@ class EditorSettings:
     highlight_current_line: bool = True
     show_whitespace: bool = False
     bracket_matching: bool = True
+    autocomplete_mode: str = "automatic"  # "automatic" or "manual"
+    autocomplete_delay_ms: int = 300      # Delay before showing suggestions
 
 
 @dataclass

@@ -32,6 +32,8 @@ When implementing or modifying code, keep these principles in mind:
 
 5. **Mandatory Decomposition** - One step per file. This is a feature, not a limitation.
 
+6. **IDE Intellisense** - The IDE includes context-aware code completion (`completion.py`) that offers comparison operators, statement shortcuts, structure snippets, and project step names. It supports both automatic and manual (`Ctrl+Space`) modes.
+
 ## Project Structure
 
 ```

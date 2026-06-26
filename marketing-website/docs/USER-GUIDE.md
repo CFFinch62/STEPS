@@ -216,7 +216,7 @@ python -m steps_ide.main
 | Shift+F5 | Stop debugging |
 | F6 | Check syntax |
 | Ctrl+P | Command palette |
-| Ctrl+Q | Quit |
+| Ctrl+Space | Trigger code completion |
 
 ### IDE Features
 
@@ -227,6 +227,32 @@ python -m steps_ide.main
 5. **Command Palette**: Access all commands with Ctrl+P
 6. **Integrated Debugger**: Step through code, inspect variables, set breakpoints
 7. **Project Diagram Viewer**: Visualize program architecture with Ctrl+D
+8. **Code Completion**: Context-aware suggestions as you type (see below)
+
+### Code Completion
+
+The Steps IDE includes intelligent code completion that helps you write Steps code faster. It works in two modes:
+
+- **Automatic** (default): Suggestions appear as you type after a short delay
+- **Manual**: Press `Ctrl+Space` to trigger suggestions
+
+**What gets completed:**
+
+| Context | What You Type | What's Suggested |
+|---------|---------------|------------------|
+| After `is ` | `is ` | Comparison operators: `equal to`, `less than`, etc. |
+| Line start | `dis` | Statement: `display` |
+| Line start | `rep` | `repeat … times`, `repeat while`, `repeat for each` |
+| Line start | `oi` | `otherwise if` |
+| Line start | `att` | `attempt:` (with scaffold) |
+| After `call ` | `call calc` | Step names from your project |
+| After `call name ` | `call my_step ` | `with`, `storing result in` |
+| Line start | `newstep` | Full step file template |
+| Line start | `newbuild` | Full building file template |
+
+You can switch between Automatic and Manual modes in **Settings → Editor → Autocomplete Mode**.
+
+For the complete reference including all shortcuts, abbreviations, snippet templates, matching rules, and cursor placement behavior, see the [Code Completion Reference](CODE-COMPLETION.md).
 
 ---
 

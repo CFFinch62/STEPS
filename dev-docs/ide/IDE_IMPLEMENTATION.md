@@ -656,6 +656,42 @@ class OutputPanel(Widget):
 2. Show validation errors in output
 3. Add flow diagram panel (Phase 2 feature)
 
+### Phase 7: Code Completion
+
+1. Create `completion.py` with CompletionEngine and CompletionPopup
+2. Integrate into `editor.py` CodeEditor.keyPressEvent()
+3. Add autocomplete settings to `settings.py` EditorSettings
+4. Add autocomplete UI to SettingsDialog in `main_window.py`
+5. Wire project step names on file open/save
+
+#### `steps_ide/app/completion.py`
+
+**Purpose**: Context-aware code completion for the Steps language.
+
+**Classes**:
+
+- `CompletionItem` — Dataclass: `display_text`, `insert_text`, `category`, `description`
+- `CompletionEngine` — Core trigger detection logic:
+  - `check_trigger(line_text, cursor_col, file_ext)` → `Optional[List[CompletionItem]]`
+  - `get_all_suggestions(line_text, cursor_col, file_ext)` → `List[CompletionItem]`
+  - `set_project_steps(step_names)` — Updates available step names
+  - `filter_items(items, prefix)` — Case-insensitive prefix matching
+- `CompletionPopup` — QWidget tooltip popup:
+  - `show_items(items, pos)` — Display items at global position
+  - `select_next()` / `select_previous()` — Keyboard navigation
+  - `accept_current()` — Accept selected item (emits signal)
+  - `dismiss()` — Hide popup
+
+**Static Data**: `COMPARISON_ITEMS`, `STATEMENT_ITEMS`, `SNIPPET_ITEMS`, `CALL_CLAUSE_ITEMS`, `STATEMENT_PREFIX_MAP`
+
+**Editor Integration** (changes to `editor.py` CodeEditor):
+
+- `_schedule_completion()` — Starts timer for automatic mode
+- `_trigger_completion(manual)` — Gets line context, calls engine, shows popup
+- `_accept_completion(item)` — Replaces trigger text, handles `$CURSOR` placement
+- `set_project_steps(step_names)` — Pass-through to engine
+- `focusOutEvent()` — Dismiss popup on focus loss
+
 ## Testing Strategy
 
 After each phase:
@@ -672,6 +708,6 @@ These Only Code files work as-is:
 - `tab_bar.py` - Tab management
 - `status_bar.py` - Status display
 - `session.py` - Session persistence
-- `settings.py` - Settings management
+- `settings.py` - Settings management (extended with autocomplete settings)
 - `loader.py` (config) - Config file loading
 - `terminal_panel.py` - Minor additions only

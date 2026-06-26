@@ -23,6 +23,7 @@ from PyQt6.QtGui import (
 from steps_ide.app.settings import SettingsManager
 from steps_ide.app.themes import Theme, ThemeManager
 from steps_ide.app.syntax import StepsHighlighter, GenericHighlighter
+from steps_ide.app.completion import CompletionEngine, CompletionPopup, CompletionItem
 
 
 class LineNumberArea(QWidget):
@@ -82,6 +83,14 @@ class CodeEditor(QPlainTextEdit):
         # Debugger state
         self._current_debug_line = -1
         self._breakpoints: set[int] = set()
+        
+        # Completion engine
+        self._completion_engine = CompletionEngine()
+        self._completion_popup = CompletionPopup(parent=None, theme=theme)
+        self._completion_popup.completion_accepted.connect(self._accept_completion)
+        self._completion_timer = QTimer()
+        self._completion_timer.setSingleShot(True)
+        self._completion_timer.timeout.connect(self._trigger_completion)
         
         self._setup_editor()
         self._setup_line_numbers()
@@ -150,6 +159,7 @@ class CodeEditor(QPlainTextEdit):
         self._apply_theme()
         if self._highlighter:
             self._highlighter.set_theme(theme)
+        self._completion_popup.set_theme(theme)
     
     def refresh_settings(self):
         """Re-apply all settings from settings manager"""
@@ -419,11 +429,36 @@ class CodeEditor(QPlainTextEdit):
             return False
     
     def keyPressEvent(self, event: QKeyEvent):
-        """Handle key press events"""
+        """Handle key press events with completion support"""
         settings = self.settings_manager.settings.editor
+        popup_visible = self._completion_popup.isVisible()
+        
+        # ── Completion popup key handling (when popup is visible) ──
+        if popup_visible:
+            if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter, Qt.Key.Key_Tab):
+                self._completion_popup.accept_current()
+                return
+            elif event.key() == Qt.Key.Key_Escape:
+                self._completion_popup.dismiss()
+                return
+            elif event.key() == Qt.Key.Key_Down:
+                self._completion_popup.select_next()
+                return
+            elif event.key() == Qt.Key.Key_Up:
+                self._completion_popup.select_previous()
+                return
+        
+        # ── Ctrl+Space: manual completion trigger ──
+        if (event.key() == Qt.Key.Key_Space and
+                event.modifiers() == Qt.KeyboardModifier.ControlModifier):
+            self._trigger_completion(manual=True)
+            return
+        
+        # ── Escape without popup: just pass through ──
         
         # Auto-indent on Enter
         if event.key() == Qt.Key.Key_Return and settings.auto_indent:
+            self._completion_popup.dismiss()
             cursor = self.textCursor()
             block = cursor.block()
             text = block.text()
@@ -465,9 +500,14 @@ class CodeEditor(QPlainTextEdit):
                 cursor.insertText(text + brackets[text])
                 cursor.movePosition(QTextCursor.MoveOperation.Left)
                 self.setTextCursor(cursor)
+                self._schedule_completion()
                 return
         
         super().keyPressEvent(event)
+        
+        # ── After processing the key, check if we should trigger completion ──
+        if event.text() and not event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            self._schedule_completion()
     
     def wheelEvent(self, event: QWheelEvent):
         """Handle mouse wheel for zoom"""
@@ -512,6 +552,143 @@ class CodeEditor(QPlainTextEdit):
         tab_width = self.settings_manager.settings.editor.tab_width
         metrics = QFontMetrics(self.font())
         self.setTabStopDistance(metrics.horizontalAdvance(' ') * tab_width)
+    
+    # ─── Completion Methods ─────────────────────────────────────────────
+    
+    def _schedule_completion(self):
+        """Schedule a completion check after the configured delay."""
+        settings = self.settings_manager.settings.editor
+        if settings.autocomplete_mode == "automatic":
+            delay = settings.autocomplete_delay_ms
+            self._completion_timer.start(delay)
+        else:
+            # In manual mode, don't auto-trigger — only Ctrl+Space
+            self._completion_popup.dismiss()
+    
+    def _trigger_completion(self, manual: bool = False):
+        """Check current context and show/hide completion popup."""
+        self._completion_timer.stop()
+        
+        cursor = self.textCursor()
+        block = cursor.block()
+        line_text = block.text()
+        cursor_col = cursor.positionInBlock()
+        
+        # Determine file extension
+        ext = ""
+        if self.file_path:
+            ext = os.path.splitext(self.file_path)[1].lower()
+        
+        # Only offer completions in Steps files
+        if ext not in ('.step', '.building', ''):
+            self._completion_popup.dismiss()
+            return
+        
+        # Get suggestions
+        if manual:
+            items = self._completion_engine.get_all_suggestions(
+                line_text, cursor_col, ext
+            )
+        else:
+            items = self._completion_engine.check_trigger(
+                line_text, cursor_col, ext
+            )
+        
+        if items:
+            # Calculate popup position (below cursor)
+            cursor_rect = self.cursorRect()
+            global_pos = self.mapToGlobal(cursor_rect.bottomLeft())
+            global_pos.setY(global_pos.y() + 4)  # Small gap below cursor
+            self._completion_popup.show_items(items, global_pos)
+        else:
+            self._completion_popup.dismiss()
+    
+    def _accept_completion(self, item: CompletionItem):
+        """Accept a completion item: replace trigger text with expansion."""
+        cursor = self.textCursor()
+        block = cursor.block()
+        line_text = block.text()
+        cursor_col = cursor.positionInBlock()
+        
+        # Determine what text to replace
+        text_before = line_text[:cursor_col]
+        stripped = text_before.lstrip()
+        indent = text_before[:len(text_before) - len(stripped)]
+        
+        # For comparison items (after "is "), replace just the text after "is "
+        import re
+        is_match = re.search(r'\bis\s(.*)$', text_before)
+        if item.category == "comparison" and is_match:
+            replace_start = cursor_col - len(is_match.group(1))
+            replace_end = cursor_col
+        elif item.category in ("step", "call_clause"):
+            # For step names after "call ", replace just the partial name
+            call_match = re.match(r'^(\s*call\s+)(\w*)$', text_before)
+            clause_match = re.match(r'^(\s*call\s+\w+\s+)(.*)$', text_before)
+            if item.category == "call_clause" and clause_match:
+                replace_start = len(clause_match.group(1))
+                replace_end = cursor_col
+            elif call_match:
+                replace_start = len(call_match.group(1))
+                replace_end = cursor_col
+            else:
+                replace_start = len(indent)
+                replace_end = cursor_col
+        else:
+            # Replace the entire typed token (from indent to cursor)
+            replace_start = len(indent)
+            replace_end = cursor_col
+        
+        # Prepare insertion text
+        insert = item.insert_text
+        
+        # For multi-line snippets, add indentation to each line
+        if '\n' in insert:
+            lines = insert.split('\n')
+            indented_lines = [lines[0]]
+            for line in lines[1:]:
+                if line.strip():
+                    indented_lines.append(indent + line)
+                else:
+                    indented_lines.append(line)
+            insert = '\n'.join(indented_lines)
+        
+        # Find $CURSOR marker position (relative to insertion)
+        cursor_marker_pos = insert.find('$CURSOR')
+        if cursor_marker_pos >= 0:
+            insert = insert.replace('$CURSOR', '')
+        
+        # Perform the replacement
+        cursor.beginEditBlock()
+        
+        # Select from replace_start to replace_end
+        block_start = block.position()
+        cursor.setPosition(block_start + replace_start)
+        cursor.setPosition(block_start + replace_end, QTextCursor.MoveMode.KeepAnchor)
+        cursor.insertText(insert)
+        
+        # Position cursor at $CURSOR marker location
+        if cursor_marker_pos >= 0:
+            final_pos = block_start + replace_start + cursor_marker_pos
+            cursor.setPosition(final_pos)
+        
+        cursor.endEditBlock()
+        self.setTextCursor(cursor)
+    
+    def set_project_steps(self, step_names: List[str]):
+        """Update the completion engine with project step names."""
+        self._completion_engine.set_project_steps(step_names)
+    
+    def focusOutEvent(self, event):
+        """Dismiss completion popup when editor loses focus."""
+        # Delay dismissal slightly to allow popup click events to process
+        QTimer.singleShot(100, self._check_focus_dismiss)
+        super().focusOutEvent(event)
+    
+    def _check_focus_dismiss(self):
+        """Check if we should dismiss popup after focus loss."""
+        if not self.hasFocus():
+            self._completion_popup.dismiss()
 
 
 class DiagramViewer(QWidget):
@@ -962,6 +1139,24 @@ class EditorTabs(QTabWidget):
         for widget in self.editors.values():
             if hasattr(widget, 'refresh_settings'):
                 widget.refresh_settings()
+    
+    def update_project_steps(self, project_path: str):
+        """Scan a project for .step files and update completion engines.
+        
+        Args:
+            project_path: Path to the project root directory
+        """
+        step_names = []
+        project_dir = Path(project_path)
+        
+        if project_dir.is_dir():
+            for step_file in project_dir.rglob("*.step"):
+                step_names.append(step_file.stem)
+        
+        # Update all open editors
+        for widget in self.editors.values():
+            if isinstance(widget, CodeEditor):
+                widget.set_project_steps(step_names)
     
     
     def goto_line(self, line: int):

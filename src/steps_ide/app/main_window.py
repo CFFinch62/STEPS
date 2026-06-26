@@ -136,6 +136,23 @@ class SettingsDialog(QDialog):
         self.bracket_matching.setChecked(self.settings.settings.editor.bracket_matching)
         editor_layout.addRow("", self.bracket_matching)
         
+        # Autocomplete settings
+        editor_layout.addRow(QLabel(""))  # Spacer
+        editor_layout.addRow(QLabel("Code Completion"))
+        
+        self.autocomplete_mode = QComboBox()
+        self.autocomplete_mode.addItems(["Automatic", "Manual (Ctrl+Space)"])
+        if self.settings.settings.editor.autocomplete_mode == "manual":
+            self.autocomplete_mode.setCurrentIndex(1)
+        editor_layout.addRow("Autocomplete Mode:", self.autocomplete_mode)
+        
+        self.autocomplete_delay = QSpinBox()
+        self.autocomplete_delay.setRange(100, 1000)
+        self.autocomplete_delay.setSingleStep(50)
+        self.autocomplete_delay.setSuffix(" ms")
+        self.autocomplete_delay.setValue(self.settings.settings.editor.autocomplete_delay_ms)
+        editor_layout.addRow("Suggestion Delay:", self.autocomplete_delay)
+        
         tabs.addTab(editor_tab, "Editor")
         
         # Theme settings
@@ -210,6 +227,11 @@ class SettingsDialog(QDialog):
         self.settings.settings.editor.word_wrap = self.word_wrap.isChecked()
         self.settings.settings.editor.highlight_current_line = self.highlight_line.isChecked()
         self.settings.settings.editor.bracket_matching = self.bracket_matching.isChecked()
+        
+        # Autocomplete settings
+        mode = "manual" if self.autocomplete_mode.currentIndex() == 1 else "automatic"
+        self.settings.settings.editor.autocomplete_mode = mode
+        self.settings.settings.editor.autocomplete_delay_ms = self.autocomplete_delay.value()
         
         # Theme
         themes = self.theme_manager.get_available_themes()
@@ -869,6 +891,10 @@ class StepsIDEMainWindow(QMainWindow):
         self.editor_tabs.current_file_changed.connect(self._on_current_file_changed)
         self.editor_tabs.cursor_position_changed.connect(self._on_cursor_position_changed)
         self.editor_tabs.file_saved.connect(lambda f: self.statusbar.showMessage(f"Saved: {f}", 3000))
+        
+        # Update step names for completion when a file is opened or saved
+        self.editor_tabs.file_opened.connect(self._update_completion_step_names)
+        self.editor_tabs.file_saved.connect(self._update_completion_step_names)
     
     def _update_recent_files_menu(self):
         """Update the recent files submenu"""
@@ -1670,6 +1696,29 @@ class StepsIDEMainWindow(QMainWindow):
     
     def _on_cursor_position_changed(self, line: int, column: int):
         self.cursor_label.setText(f"Ln {line}, Col {column}")
+    
+    def _update_completion_step_names(self, filepath: str):
+        """Detect project root from a filepath and update step name completions."""
+        if not filepath or filepath.startswith("__untitled_"):
+            return
+        
+        file_path = Path(filepath)
+        
+        # Walk up to find the project root (directory containing .building file)
+        search_path = file_path.parent if file_path.is_file() else file_path
+        project_root = None
+        
+        for _ in range(10):  # Max depth guard
+            if list(search_path.glob("*.building")):
+                project_root = search_path
+                break
+            parent = search_path.parent
+            if parent == search_path:
+                break
+            search_path = parent
+        
+        if project_root:
+            self.editor_tabs.update_project_steps(str(project_root))
     
     # Help
     def _show_quick_reference(self):

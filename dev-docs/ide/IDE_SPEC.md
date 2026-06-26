@@ -450,6 +450,45 @@ Stored in `~/.config/steps/`:
 3. Go to definition
 4. Find all references
 
+### Phase 6: Code Completion
+
+1. CompletionEngine with trigger detection
+2. CompletionPopup widget for suggestion display
+3. Editor keyPressEvent integration
+4. Settings for automatic/manual mode
+5. Project step name scanning
+
+## Code Completion Architecture
+
+The IDE includes a context-aware code completion system in `completion.py`:
+
+### Components
+
+- **CompletionItem**: Data class holding display text, insertion text, category, and description
+- **CompletionEngine**: Analyzes line text and cursor position to detect triggers
+- **CompletionPopup**: QWidget popup positioned below the cursor with keyboard navigation
+
+### Trigger Categories
+
+| Category | Trigger Context | Examples |
+|----------|----------------|----------|
+| comparison | After `is ` keyword | `equal to`, `less than`, `a number` |
+| statement | Line start prefix match | `dis`→`display`, `rep`→`repeat`, `oi`→`otherwise if` |
+| snippet | Line start keyword | `newstep`, `newbuild`, `newriser` |
+| step | After `call ` keyword | Project step names |
+| call_clause | After `call <name> ` | `with`, `storing result in` |
+
+### Modes
+
+- **Automatic**: Suggestions appear after a configurable delay (default 300ms)
+- **Manual**: Suggestions appear only on `Ctrl+Space`
+
+### Integration Points
+
+- `CodeEditor.keyPressEvent()`: Routes keys to popup when visible, schedules completion checks
+- `EditorTabs.update_project_steps()`: Scans project for `.step` files, updates all editors
+- `MainWindow._update_completion_step_names()`: Triggered on file open/save to refresh step list
+
 ## Reuse from Only Code
 
 | Component | Reuse Strategy |
@@ -473,3 +512,4 @@ Stored in `~/.config/steps/`:
 5. **Flow visualization** - Diagram shows program structure
 6. **Educational errors** - Every error teaches how to fix it
 7. **Keyboard-first** - Everything accessible without mouse
+8. **Code completion** - Context-aware suggestions reduce typing burden
