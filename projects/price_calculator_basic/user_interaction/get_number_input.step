@@ -4,8 +4,8 @@ step: get_number_input
     returns: value as number
 
     declare:
-        value as number fixed
-        input_text as number
+        value as number
+        input_text as text
 
     do:
         display prompt_text

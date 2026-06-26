@@ -40,7 +40,7 @@ STEPS_FUNCTION_KEYWORDS = [
 # Steps builtin functions (multi-word entries must come before single-word)
 STEPS_BUILTINS = [
     'clear console',
-    'display', 'indicate', 'input'
+    'display', 'indicate', 'input', 'console'
 ]
 
 # Steps list operations
@@ -50,7 +50,7 @@ STEPS_LIST_KEYWORDS = [
 
 # Steps types
 STEPS_TYPES = [
-    'number', 'text', 'boolean', 'list', 'table'
+    'number', 'text', 'boolean', 'list', 'table', 'decimal'
 ]
 
 # Steps boolean constants
@@ -269,14 +269,43 @@ class StepsHighlighter(QSyntaxHighlighter):
     
     def highlightBlock(self, text: str):
         """Highlight a single block of text"""
-        # Apply regular rules
+        # First pass: find all string and comment regions (these are "protected")
+        protected_ranges = []
+        
+        # Collect string spans
+        string_pattern = QRegularExpression(r'"(?:[^"\\]|\\.)*"')
+        iterator = string_pattern.globalMatch(text)
+        while iterator.hasNext():
+            match = iterator.next()
+            protected_ranges.append((match.capturedStart(), match.capturedEnd()))
+        
+        # Collect line comment spans
+        comment_pattern = QRegularExpression(r'note:.*$')
+        iterator = comment_pattern.globalMatch(text)
+        while iterator.hasNext():
+            match = iterator.next()
+            protected_ranges.append((match.capturedStart(), match.capturedEnd()))
+        
+        # Apply all rules, but skip keyword matches that fall inside protected regions
         for pattern, format_name in self._rules:
             iterator = pattern.globalMatch(text)
             while iterator.hasNext():
                 match = iterator.next()
-                start = match.capturedStart(0)
-                length = match.capturedLength(0)
-                self.setFormat(start, length, self._formats[format_name])
+                start = match.capturedStart()
+                length = match.capturedLength()
+                
+                # String and comment rules always apply (they define the protected regions)
+                if format_name in ('string', 'comment'):
+                    self.setFormat(start, length, self._formats[format_name])
+                else:
+                    # Skip if this match starts inside a protected region
+                    inside_protected = False
+                    for pstart, pend in protected_ranges:
+                        if pstart <= start < pend:
+                            inside_protected = True
+                            break
+                    if not inside_protected:
+                        self.setFormat(start, length, self._formats[format_name])
         
         # Handle multi-line block comments (note block: ... end note)
         self._handle_multiline_comments(text)
