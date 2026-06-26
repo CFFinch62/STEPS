@@ -170,7 +170,7 @@ ls -la tree-sitter-steps/queries/highlights_minimal.scm
 
 2. **Wrong language set**:
    - Check that `detect_language()` returns `"steps"`
-   - Verify file extension is `.step`, `.floor`, or `.building`
+   - Verify file extension is `.step` or `.building`
 
 3. **Query has errors**:
    - Run Test 4 above to verify query compiles

@@ -1,4 +1,0 @@
-floor: examples
-    step: demo_basic_error
-    step: demo_safe_input
-    step: demo_cleanup

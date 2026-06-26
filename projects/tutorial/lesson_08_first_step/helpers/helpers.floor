@@ -1,7 +1,0 @@
-floor: helpers
-
-    step: greet
-    step: show_date
-    step: get_lucky_number
-    step: get_greeting
-

@@ -1,6 +1,14 @@
 building: lesson_08_first_step
     note: Lesson 8 - Creating Your First Step
     note: Learn how to create and call reusable steps
+
+    floors:
+        floor: helpers
+            step: greet
+            step: show_date
+            step: get_lucky_number
+            step: get_greeting
+
     display ""
     
     display "=== Calling Steps with no Return Values ==="
@@ -37,4 +45,3 @@ building: lesson_08_first_step
     display ""
     
     exit
-

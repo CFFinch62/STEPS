@@ -4,6 +4,34 @@ building: price_calculator_advanced
     note: A console application that calculates Price, Margin, Profit,
     note: Markup, and Cost given any two valid input values.
 
+
+    floors:
+        floor: calculations
+            step: solve_from_price_and_cost
+            step: solve_from_price_and_profit
+            step: solve_from_price_and_margin
+            step: solve_from_price_and_markup
+            step: solve_from_cost_and_profit
+            step: solve_from_cost_and_margin
+            step: solve_from_cost_and_markup
+            step: solve_from_profit_and_margin
+            step: solve_from_profit_and_markup
+            step: calculate
+        floor: user_interaction
+            step: get_menu_choice
+            step: get_choice_label
+            step: get_input_prompt
+            step: get_numeric_input
+            step: confirm_continue
+            step: is_valid_choice
+            step: is_valid_combination
+            step: show_header
+            step: show_results
+            step: show_separator
+            step: show_main_menu
+            step: show_second_menu
+            step: show_error
+
     do:
         running as text
         first_choice as number

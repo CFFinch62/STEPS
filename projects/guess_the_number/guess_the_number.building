@@ -1,6 +1,12 @@
 building: guess_the_number
     note: A fun number guessing game that teaches randomness and loops!
 
+
+    floors:
+        floor: game
+            step: play_round
+            step: get_feedback
+
     display "==================================="
     display "   Welcome to Guess the Number!"
     display "==================================="

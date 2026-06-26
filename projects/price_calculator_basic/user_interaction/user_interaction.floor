@@ -1,7 +1,0 @@
-floor: user_interaction
-
-    step: display_menu
-    step: display_values
-    step: get_number_input
-    step: ask_repeat
-    step: route_calculation

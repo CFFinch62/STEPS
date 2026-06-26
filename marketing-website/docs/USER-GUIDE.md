@@ -14,12 +14,14 @@ This guide will help you get started with Steps, an educational programming lang
 4. [The Building Metaphor](#the-building-metaphor)
 5. [Using the REPL](#using-the-repl)
 6. [Using the IDE](#using-the-ide)
-7. [Language Basics](#language-basics)
-8. [Control Flow](#control-flow)
-9. [Working with Data](#working-with-data)
-10. [Creating Steps and Floors](#creating-steps-and-floors)
-11. [Error Handling](#error-handling)
-12. [Best Practices](#best-practices)
+7. [Debugging](#debugging)
+8. [Diagram Tool](#diagram-tool)
+9. [Language Basics](#language-basics)
+10. [Control Flow](#control-flow)
+11. [Working with Data](#working-with-data)
+12. [Creating Steps and Floors](#creating-steps-and-floors)
+13. [Error Handling](#error-handling)
+14. [Best Practices](#best-practices)
 
 ---
 
@@ -47,7 +49,7 @@ Steps is designed to teach programming concepts through an architectural metapho
 
 ```bash
 # Clone the repository
-git clone https://github.com/CFFinch62/Steps
+git clone <repository-url>
 cd Steps
 
 # Create a virtual environment (recommended)
@@ -115,13 +117,11 @@ Building (your complete program)
 
 ```
 my_project/
-├── my_project.building    # Entry point (required)
+├── my_project.building    # Entry point (includes floor declarations)
 ├── floor_one/             # A floor folder
-│   ├── floor_one.floor    # Floor definition
 │   ├── step_a.step        # A step
 │   └── step_b.step        # Another step
 └── floor_two/
-    ├── floor_two.floor
     └── step_c.step
 ```
 
@@ -210,7 +210,10 @@ python -m steps_ide.main
 | Ctrl+B | Toggle file browser |
 | Ctrl+Shift+P | Toggle project browser |
 | Ctrl+J | Toggle terminal |
-| F5 | Run Steps project |
+| Ctrl+D | Show project diagram |
+| Ctrl+F5 | Run Steps project |
+| F5 | Start debugging |
+| Shift+F5 | Stop debugging |
 | F6 | Check syntax |
 | Ctrl+P | Command palette |
 | Ctrl+Q | Quit |
@@ -218,10 +221,157 @@ python -m steps_ide.main
 ### IDE Features
 
 1. **Project Browser**: View your project's building/floor/step structure
-2. **Syntax-Aware Editor**: Recognizes `.building`, `.floor`, and `.step` files
-3. **Run/Check Integration**: Press F5 to run, F6 to check syntax
+2. **Syntax-Aware Editor**: Recognizes `.building` and `.step` files
+3. **Run/Check Integration**: Press Ctrl+F5 to run, F6 to check syntax
 4. **Terminal Panel**: See output and error messages
 5. **Command Palette**: Access all commands with Ctrl+P
+6. **Integrated Debugger**: Step through code, inspect variables, set breakpoints
+7. **Project Diagram Viewer**: Visualize program architecture with Ctrl+D
+
+---
+
+## Debugging
+
+The Steps IDE includes a full-featured debugger to help you understand how your programs run.
+
+### Debug Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| F5 | Start debugging |
+| Shift+F5 | Stop debugging |
+| F9 | Toggle breakpoint |
+| F11 | Step Into (enter steps/risers) |
+| F10 | Step Over (skip into steps) |
+| Shift+F11 | Step Out (exit current step) |
+| Ctrl+Shift+D | Toggle debug panel |
+
+### Starting the Debugger
+
+1. Open a `.building` or `.step` file
+2. Press **F5** or use **Debug → Start Debugging**
+3. The debug panel will appear on the right side
+
+### Setting Breakpoints
+
+Click in the line number area (left margin) or press **F9** to toggle a breakpoint on the current line. A red circle indicates a breakpoint.
+
+When the program runs, it will pause at breakpoints, allowing you to:
+- Inspect variable values
+- Step through code line by line
+- Understand program flow
+
+### The Debug Panel
+
+The debug panel shows two tabs:
+
+**Variables Tab:**
+- **🌐 Globals**: Variables defined in the main building
+- **📦 Step/Riser Name**: Local variables when inside a step or riser
+- Values are color-coded by type (green = number, orange = text, etc.)
+- Newly changed variables are highlighted in green
+
+**Call Stack Tab:**
+- Shows the chain of step/riser calls
+- Empty when in the main building
+- Shows nested levels when inside steps and risers
+- Click a frame to jump to that location
+
+### Stepping Through Code
+
+- **Step Into (F11)**: Execute the next line. If it's a step call, enter the step.
+- **Step Over (F10)**: Execute the next line. If it's a step call, run it completely without stopping inside.
+- **Step Out (Shift+F11)**: Run until the current step returns, then pause.
+- **Continue**: Resume running until the next breakpoint.
+
+### Debugging Tips
+
+1. **Start Small**: Set a breakpoint at the beginning of your program and step through
+2. **Watch Variables**: Check that variables have the values you expect
+3. **Use Step Over**: When you trust a step works correctly, use Step Over to skip into it
+4. **Check the Call Stack**: When inside nested steps, the call stack shows how you got there
+
+---
+
+## Diagram Tool
+
+The diagram tool generates ASCII art flow diagrams showing the structure of your Steps programs. You can use it from the command line or directly in the IDE.
+
+### Using Diagrams in the IDE
+
+The IDE includes an integrated diagram viewer for visualizing your project structure.
+
+**To view a diagram:**
+
+1. **With a file open**: Press **Ctrl+D** or go to **View → Show Project Diagram**
+   - The IDE automatically detects the project from your currently open file
+
+2. **Without a file open**: Press **Ctrl+D** and select your project folder
+   - The IDE will prompt you to choose a folder containing a `.building` file
+
+**Diagram Tab Features:**
+
+- **Read-only viewer**: Displays the diagram with proper monospace formatting
+- **Save button**: Click "💾 Save Diagram As..." to export the diagram to a `.txt` file
+- **Single tab**: Only one diagram tab exists at a time - opening a new diagram updates the existing tab
+- **Theme-aware**: The diagram viewer respects your IDE theme settings
+
+**Font Recommendations:**
+
+For best diagram display, use a monospace font that supports Unicode box-drawing characters:
+- Courier New (recommended)
+- Courier
+- Consolas
+- Monaco
+
+The IDE will warn you if your current font may not display diagrams correctly.
+
+### Using Diagrams from the Command Line
+
+```bash
+python -m steps.main diagram <path_to_project>
+
+# Example
+python -m steps.main diagram projects/tip_calculator
+```
+
+### What It Shows
+
+The diagram displays your program's architecture:
+- **Building**: The main program (🏢)
+- **Floors**: Grouped functionality (📂)
+- **Steps**: Individual tasks (🔷) with their parameters and return types
+- **Flow arrows**: Relationships between components
+
+### Example Output
+
+```
+┌──────────────────────────────────────────────────┐
+│ 🏢 BUILDING: tip_calculator                      │
+├──────────────────────────────────────────────────┤
+│                                                  │
+│  ┌────────────────────────────────────────────┐  │
+│  │ 📂 FLOOR: calculations                     │  │
+│  ├────────────────────────────────────────────┤  │
+│  │                                            │  │
+│  │    ┌────────────────────────────────────┐  │  │
+│  │    │ 🔷 calculate_tip                   │  │  │
+│  │    │   needs: bill, rate                │  │  │
+│  │    │   returns: number                  │  │  │
+│  │    └────────────────────────────────────┘  │  │
+│  │                                            │  │
+│  └────────────────────────────────────────────┘  │
+│                                                  │
+└──────────────────────────────────────────────────┘
+```
+
+### When to Use It
+
+- **Understanding projects**: Quickly see how a project is organized
+- **Documentation**: Generate architecture diagrams for your README
+- **Teaching**: Show students how to structure their code
+- **Planning**: Visualize your project before building it
+- **Code review**: Share project structure with instructors or peers
 
 ---
 
@@ -298,6 +448,28 @@ display "Hello, World!"
 display "Your score is: " added to (score as text)
 ```
 
+The `display` statement outputs text followed by a newline.
+
+### Output Without Newline
+
+```steps
+indicate "Loading"
+indicate "."
+indicate "."
+indicate "."
+display " Done!"
+```
+
+The `indicate` statement outputs text **without** a newline. This is useful for creating progress bars and dynamic console output.
+
+### Clear the Console
+
+```steps
+clear console
+```
+
+Clears the terminal screen. Works on Windows 10+, Linux, and macOS.
+
 ### Getting Input
 
 ```steps
@@ -372,6 +544,18 @@ repeat while count is less than 10
     set count to count + 1
 ```
 
+**Iteration Limit:**
+
+To prevent infinite loops, Steps enforces a maximum iteration limit (default: 10,000,000). You can adjust this when needed:
+
+```steps
+set iteration limit to 100000
+
+note: Your loop code here
+
+set iteration limit to 10000000  # Reset to default
+```
+
 ---
 
 ## Working with Data
@@ -384,6 +568,12 @@ set quantity to 3
 set total to price * quantity
 set discount to total * 0.1
 set final to total - discount
+```
+
+**Formatting Numbers:**
+```steps
+set pi to 3.14159265
+display "Pi is " added to (pi as decimal(2))    # "Pi is 3.14"
 ```
 
 ### Text (Strings)
@@ -465,16 +655,22 @@ call calculate_tax with 100, 8.5 storing result in tax_amount
 display "Tax: $" added to (tax_amount as text)
 ```
 
-### Floor Definition
+### Floor Declaration
 
-A floor groups related steps:
+Floors are declared inline in the building file:
 
-**calculations/calculations.floor:**
+**my_project.building:**
 ```steps
-floor: calculations
-    step: calculate_tax
-    step: calculate_total
-    step: apply_discount
+building: my_project
+
+    floors:
+        floor: calculations
+            step: calculate_tax
+            step: calculate_total
+            step: apply_discount
+
+    call calculate_tax with 100, 8.5 storing result in tax
+    exit
 ```
 
 ### Private Helpers (Risers)
@@ -558,17 +754,14 @@ Group related steps into floors:
 
 ```
 my_app/
-├── my_app.building
+├── my_app.building         # Includes floors: section
 ├── user_management/        # User-related steps
-│   ├── user_management.floor
 │   ├── create_user.step
 │   └── validate_user.step
 ├── payments/               # Payment-related steps
-│   ├── payments.floor
 │   ├── process_payment.step
 │   └── issue_refund.step
 └── notifications/          # Notification-related steps
-    ├── notifications.floor
     └── send_email.step
 ```
 
@@ -604,6 +797,72 @@ if unsuccessful:
     display "Please enter a valid number"
     set age to 0
 ```
+
+---
+
+## Console Graphics (TUI)
+
+Steps includes built-in functions for creating attractive console interfaces.
+
+### Drawing Boxes and Banners
+
+```steps
+note: Create a decorative banner
+call banner with "My Application", 40 storing result in b
+display b
+
+note: Draw a box around text
+call box with "Welcome!", 30 storing result in bx
+display bx
+```
+
+Output:
+```
+╔══════════════════════════════════════╗
+║           My Application             ║
+╚══════════════════════════════════════╝
+
+┌────────────────────────────┐
+│          Welcome!          │
+└────────────────────────────┘
+```
+
+### Progress Bars
+
+**Static progress bar:**
+```steps
+call progress_bar with 7, 10, 20 storing result in pb
+display "Loading: " added to pb
+```
+
+Output: `Loading: [██████████████░░░░░░] 70%`
+
+**Dynamic progress bar (updates in place):**
+```steps
+set i to 0
+repeat while i is less than or equal to 100
+    call progress_bar with i, 100, 40 storing result in bar
+    indicate "\r" added to "Progress: " added to bar added to " " added to (i as text) added to "%"
+    set i to i + 10
+display ""  # Final newline after completion
+```
+
+This creates a progress bar that updates on the same line using `indicate` with the carriage return character `\r`.
+
+### Menus
+
+```steps
+call menu with ["Add Contact", "Search", "Exit"]
+```
+
+Output:
+```
+  1. Add Contact
+  2. Search
+  3. Exit
+```
+
+See [STDLIB.md](STDLIB.md#tui-floor-text-user-interface) for the complete list of TUI functions.
 
 ---
 

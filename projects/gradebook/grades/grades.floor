@@ -1,4 +1,0 @@
-floor: grades
-    step: add_student
-    step: add_grade
-    step: calculate_average

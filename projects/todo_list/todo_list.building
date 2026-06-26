@@ -1,6 +1,16 @@
 building: todo_list
     note: A todo list manager with file persistence!
     
+
+    floors:
+        floor: data
+            step: load_todos
+            step: save_todos
+        floor: todos
+            step: show_todos
+            step: add_todo
+            step: mark_done
+
     display "========================================"
     display "       Steps Todo List Manager"
     display "========================================"

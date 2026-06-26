@@ -51,15 +51,17 @@ class BuildingNode(ASTNode):
     
     Attributes:
         name: Building/program name
+        floors: Inline floor declarations defining the project's floor/step structure
         body: Statements to execute
     """
     name: str
+    floors: List["FloorNode"] = field(default_factory=list)
     body: List[StatementNode] = field(default_factory=list)
 
 
 @dataclass
 class FloorNode(ASTNode):
-    """Represents a .floor file (functional grouping definition).
+    """Represents an inline floor declaration within a building file.
     
     Attributes:
         name: Floor name

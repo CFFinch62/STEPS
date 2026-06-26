@@ -2,6 +2,20 @@ building: lesson_11_complete_project
     note: Lesson 11 - Complete Contact Manager Project
     note: A full application demonstrating all Steps concepts
     
+
+    floors:
+        floor: console_output
+            step: show_welcome
+            step: show_menu
+            step: show_contact
+        floor: contacts
+            step: add_contact
+            step: list_contacts
+            step: search_contact
+            step: count_contacts
+        floor: user_input
+            step: get_contact_info
+
     set contacts to []
     set choice to 0
     set running to true
@@ -30,4 +44,3 @@ building: lesson_11_complete_project
             display "Invalid choice. Please try again."
     
     exit
-

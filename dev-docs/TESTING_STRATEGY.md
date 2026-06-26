@@ -391,12 +391,12 @@ class TestFullPipeline:
         project = tmp_project("greet", {
             "greet.building": """building: greet
 
+    floors:
+        floor: main
+            step: say_hello
+
     call say_hello
     exit
-""",
-            "main/main.floor": """floor: main
-
-    step: say_hello
 """,
             "main/say_hello.step": """step: say_hello
     belongs to: main
@@ -416,13 +416,13 @@ class TestFullPipeline:
         project = tmp_project("calc", {
             "calc.building": """building: calc
 
+    floors:
+        floor: math
+            step: double
+
     call double with 21 storing result in answer
     display answer
     exit
-""",
-            "math/math.floor": """floor: math
-
-    step: double
 """,
             "math/double.step": """step: double
     belongs to: math
@@ -527,12 +527,12 @@ class TestRuntimeErrors:
         project = tmp_project("typo", {
             "typo.building": """building: typo
 
+    floors:
+        floor: main
+            step: say_hello
+
     call say_helo
     exit
-""",
-            "main/main.floor": """floor: main
-
-    step: say_hello
 """,
             "main/say_hello.step": """step: say_hello
     belongs to: main

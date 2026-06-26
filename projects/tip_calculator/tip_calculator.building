@@ -1,6 +1,11 @@
 building: tip_calculator
     note: Calculate tip and total for a restaurant bill
     
+
+    floors:
+        floor: math
+            step: calculate_tip
+
     display "Welcome to Tip Calculator!"
     display ""
     
@@ -20,4 +25,3 @@ building: tip_calculator
     display "Total: $" added to (total as text)
     
     exit
-    123.12

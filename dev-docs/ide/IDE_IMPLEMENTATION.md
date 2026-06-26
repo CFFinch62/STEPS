@@ -333,13 +333,7 @@ class ProjectBrowser(Widget):
                 data={"type": "floor", "name": floor.name}
             )
             
-            # Add floor definition file
-            floor_node.add(
-                f"📋 {floor.name}.floor",
-                data={"type": "floor_file", "path": floor.floor_path, "floor": floor.name}
-            )
-            
-            # Add steps
+            # Add steps directly (no .floor node)
             for step in floor.steps:
                 floor_node.add(
                     f"📝 {step.name}.step",
@@ -400,7 +394,6 @@ from pathlib import Path
 # Steps-specific language mapping
 STEPS_EXTENSIONS = {
     ".building": "steps",
-    ".floor": "steps",
     ".step": "steps",
 }
 
@@ -475,7 +468,7 @@ Add project awareness:
 def _detect_language(suffix: str) -> str:
     """Detect language from file extension."""
     # ADD Steps extensions at the top
-    if suffix in [".building", ".floor", ".step"]:
+    if suffix in [".building", ".step"]:
         return "steps"
     
     # Keep existing language_map...
@@ -520,23 +513,17 @@ class NewProjectDialog(ModalScreen):
         project_path = Path(location) / name
         project_path.mkdir(parents=True, exist_ok=True)
         
-        # Create building file
+        # Create building file with inline floors
         building_file = project_path / f"{name}.building"
         building_file.write_text(f'''building: {name}
 
     note: Your program starts here
+
+    floors:
+        floor: main
+            note: Add your steps here
     
     exit
-''')
-        
-        # Create main floor
-        main_floor = project_path / "main"
-        main_floor.mkdir()
-        
-        floor_file = main_floor / "main.floor"
-        floor_file.write_text('''floor: main
-
-    note: Add your steps here
 ''')
 
 

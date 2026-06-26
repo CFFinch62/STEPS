@@ -1,6 +1,14 @@
 building: lesson_14_random
     note: Learn how to add randomness to your programs!
     
+
+    floors:
+        floor: games
+            step: demo_dice_rolls
+            step: demo_random_choice
+            step: play_higher_lower
+            step: coin_flip_simulator
+
     display "========================================"
     display "   Lesson 14: Randomness and Games"
     display "========================================"

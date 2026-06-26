@@ -1,3 +1,0 @@
-floor: data
-    step: load_todos
-    step: save_todos

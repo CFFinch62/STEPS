@@ -1,7 +1,7 @@
 # STEPS Programming Language
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-364%20passing-green.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-437%20passing-green.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ![STEPS IDE Screenshot](images/STEPSIDE.png)
@@ -18,12 +18,12 @@ STEPS teaches programming through an architectural metaphor, enforcing decomposi
 
 STEPS uses architecture to make program structure explicit and visible:
 
-| Construct    | Purpose                                 | File Extension |
-| ------------ | --------------------------------------- | -------------- |
-| **Building** | Complete program (entry point)          | `.building`    |
-| **Floor**    | Functional grouping of related STEPS    | `.floor`       |
-| **Step**     | Single unit of work (one file per step) | `.step`        |
-| **Riser**    | Private helper function within a step   | (inside .step) |
+| Construct    | Purpose                                 | File Extension   |
+| ------------ | --------------------------------------- | ---------------- |
+| **Building** | Complete program (entry point)          | `.building`      |
+| **Floor**    | Functional grouping of related STEPS    | (in `.building`) |
+| **Step**     | Single unit of work (one file per step) | `.step`          |
+| **Riser**    | Private helper function within a step   | (inside `.step`) |
 
 This hierarchy enforces decomposition - you can't write monolithic code in STEPS!
 
@@ -117,7 +117,6 @@ Here's a more complete program with floors and STEPS:
 price_calculator/
 ├── price_calculator.building
 └── calculations/
-    ├── calculations.floor
     ├── calculate_subtotal.step
     └── apply_discount.step
 ```
@@ -127,31 +126,22 @@ price_calculator/
 building: price_calculator
     note: Calculate the final price with discount
 
-    declare:
-        price as number
-        quantity as number
-        subtotal as number
-        final_price as number
+    floors:
+        floor: calculations
+            step: calculate_subtotal
+            step: apply_discount
 
-    do:
-        display "Enter price: "
-        set price to input as number
+    display "Enter price: "
+    set price to input as number
 
-        display "Enter quantity: "
-        set quantity to input as number
+    display "Enter quantity: "
+    set quantity to input as number
 
-        call calculate_subtotal with price, quantity storing result in subtotal
-        call apply_discount with subtotal, 10 storing result in final_price
+    call calculate_subtotal with price, quantity storing result in subtotal
+    call apply_discount with subtotal, 10 storing result in final_price
 
-        display "Final price: $" added to (final_price as text)
-        exit
-```
-
-**calculations/calculations.floor:**
-```STEPS
-floor: calculations
-    step: calculate_subtotal
-    step: apply_discount
+    display "Final price: $" added to (final_price as text)
+    exit
 ```
 
 **calculations/calculate_subtotal.step:**

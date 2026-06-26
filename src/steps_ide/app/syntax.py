@@ -12,7 +12,7 @@ from steps_ide.app.themes import Theme, SyntaxColors
 
 # Steps Language structure keywords
 STEPS_STRUCTURE_KEYWORDS = [
-    'building:', 'floor:', 'step:', 'riser:'
+    'building:', 'floor:', 'floors:', 'step:', 'riser:'
 ]
 
 # Steps clause keywords

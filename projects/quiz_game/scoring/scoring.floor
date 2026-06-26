@@ -1,3 +1,0 @@
-floor: scoring
-    step: show_final_score
-    step: get_score_feedback

@@ -32,12 +32,18 @@ Represents a `.building` file (program entry point).
 @dataclass
 class BuildingNode(ASTNode):
     name: str                      # Building/program name
+    floors: List[FloorNode]        # Inline floor declarations (from floors: section)
     body: List[StatementNode]      # Statements to execute
 ```
 
 **Example Source:**
 ```
 building: price_calculator
+
+    floors:
+        floor: calculations
+            step: calc_from_price_and_margin
+            step: calc_from_price_and_cost
 
     display "Hello"
     call main_menu
@@ -46,7 +52,7 @@ building: price_calculator
 
 ### FloorNode
 
-Represents a `.floor` file (grouping definition).
+Represents a floor declaration (inline in the building's `floors:` section).
 
 ```python
 @dataclass
@@ -55,12 +61,12 @@ class FloorNode(ASTNode):
     steps: List[str]               # Step names declared in this floor
 ```
 
-**Example Source:**
+**Example Source (within a building):**
 ```
-floor: calculations
-
-    step: calc_from_price_and_margin
-    step: calc_from_price_and_cost
+floors:
+    floor: calculations
+        step: calc_from_price_and_margin
+        step: calc_from_price_and_cost
 ```
 
 ### StepNode

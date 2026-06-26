@@ -1,6 +1,13 @@
 building: lesson_12_error_handling
     note: Learn how to handle errors gracefully in Steps!
     
+
+    floors:
+        floor: examples
+            step: demo_basic_error
+            step: demo_safe_input
+            step: demo_cleanup
+
     display "========================================"
     display "   Lesson 12: Error Handling in Steps"
     display "========================================"

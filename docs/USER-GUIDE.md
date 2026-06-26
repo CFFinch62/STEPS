@@ -117,13 +117,11 @@ Building (your complete program)
 
 ```
 my_project/
-├── my_project.building    # Entry point (required)
+├── my_project.building    # Entry point (includes floor declarations)
 ├── floor_one/             # A floor folder
-│   ├── floor_one.floor    # Floor definition
 │   ├── step_a.step        # A step
 │   └── step_b.step        # Another step
 └── floor_two/
-    ├── floor_two.floor
     └── step_c.step
 ```
 
@@ -223,7 +221,7 @@ python -m steps_ide.main
 ### IDE Features
 
 1. **Project Browser**: View your project's building/floor/step structure
-2. **Syntax-Aware Editor**: Recognizes `.building`, `.floor`, and `.step` files
+2. **Syntax-Aware Editor**: Recognizes `.building` and `.step` files
 3. **Run/Check Integration**: Press Ctrl+F5 to run, F6 to check syntax
 4. **Terminal Panel**: See output and error messages
 5. **Command Palette**: Access all commands with Ctrl+P
@@ -657,16 +655,22 @@ call calculate_tax with 100, 8.5 storing result in tax_amount
 display "Tax: $" added to (tax_amount as text)
 ```
 
-### Floor Definition
+### Floor Declaration
 
-A floor groups related steps:
+Floors are declared inline in the building file:
 
-**calculations/calculations.floor:**
+**my_project.building:**
 ```steps
-floor: calculations
-    step: calculate_tax
-    step: calculate_total
-    step: apply_discount
+building: my_project
+
+    floors:
+        floor: calculations
+            step: calculate_tax
+            step: calculate_total
+            step: apply_discount
+
+    call calculate_tax with 100, 8.5 storing result in tax
+    exit
 ```
 
 ### Private Helpers (Risers)
@@ -750,17 +754,14 @@ Group related steps into floors:
 
 ```
 my_app/
-├── my_app.building
+├── my_app.building         # Includes floors: section
 ├── user_management/        # User-related steps
-│   ├── user_management.floor
 │   ├── create_user.step
 │   └── validate_user.step
 ├── payments/               # Payment-related steps
-│   ├── payments.floor
 │   ├── process_payment.step
 │   └── issue_refund.step
 └── notifications/          # Notification-related steps
-    ├── notifications.floor
     └── send_email.step
 ```
 

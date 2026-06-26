@@ -2,7 +2,7 @@
 
 > **Complete reference for the Steps programming language**
 
-Version 1.0
+Version 2.0
 
 ---
 
@@ -201,13 +201,11 @@ set bool to text as boolean        # true
 
 ```
 project_name/                    # Project folder
-├── project_name.building        # Entry point (required)
+├── project_name.building        # Entry point (required, includes floor declarations)
 ├── floor_name/                  # Floor folder
-│   ├── floor_name.floor         # Floor definition
 │   ├── step_one.step            # Step files
 │   └── step_two.step
 └── another_floor/
-    ├── another_floor.floor
     └── another_step.step
 ```
 
@@ -673,13 +671,23 @@ step: parent_step
 
 ## 10. Floors and Buildings
 
-### 10.1 Floor Definition
+### 10.1 Floor Declaration
+
+Floors are declared inline in the building file using the `floors:` section:
 
 ```steps
-floor: floor_name
-    step: step_one
-    step: step_two
-    step: step_three
+building: project_name
+    note: Optional description
+
+    floors:
+        floor: floor_one
+            step: step_a
+            step: step_b
+        floor: floor_two
+            step: step_c
+
+    statements
+    exit
 ```
 
 ### 10.2 Building Definition
@@ -688,12 +696,17 @@ floor: floor_name
 building: project_name
     note: Optional description
 
+    floors:
+        floor: floor_name
+            step: step_one
+            step: step_two
+
     statements
     exit
 ```
 
 > **Note:** Buildings do **not** use `declare:` or `do:` sections — those belong to steps and risers only.
-> Write statements directly inside the indented building body.
+> Write statements directly inside the indented building body, after the `floors:` section.
 
 ### 10.3 Building Sections
 
@@ -955,8 +968,7 @@ problem_message
 
 | Extension | Purpose | Required Contents |
 |-----------|---------|-------------------|
-| `.building` | Program entry point | `building:` declaration |
-| `.floor` | Floor definition | `floor:` declaration |
+| `.building` | Program entry point | `building:` declaration, optional `floors:` section |
 | `.step` | Step implementation | `step:` declaration |
 
 ### Naming Conventions
@@ -968,13 +980,11 @@ problem_message
 **Examples:**
 ```
 my_project/
-├── my_project.building      # building: my_project
+├── my_project.building      # building: my_project (includes floors: section)
 ├── data_processing/
-│   ├── data_processing.floor    # floor: data_processing
 │   ├── load_data.step           # step: load_data
 │   └── validate_data.step       # step: validate_data
 └── output/
-    ├── output.floor             # floor: output
     └── format_report.step       # step: format_report
 ```
 
@@ -985,8 +995,8 @@ my_project/
 ### Program Structure
 ```
 program     → building
-building    → "building:" IDENTIFIER note? statement*
-floor       → "floor:" IDENTIFIER step_list
+building    → "building:" IDENTIFIER note? floors_section? statement*
+floors_sec  → "floors:" ("floor:" IDENTIFIER ("step:" IDENTIFIER)*)*
 step        → "step:" IDENTIFIER step_sections
 riser       → "riser:" IDENTIFIER riser_sections
 ```
@@ -1054,7 +1064,7 @@ Steps provides educational error messages that explain what went wrong and how t
 | Error | Cause | Example |
 |-------|-------|---------|
 | E401 | Missing building file | No `.building` in project folder |
-| E402 | Missing floor file | Floor folder without `.floor` file |
+| E402 | Missing step file | Step declared in floor but file not found |
 | E403 | Step not in floor | Step without `belongs to:` |
 
 ---
@@ -1067,6 +1077,10 @@ Here is a complete, working Steps program:
 ```steps
 building: tip_calculator
     note: Calculate tip and total for a restaurant bill
+
+    floors:
+        floor: math
+            step: calculate_tip
 
     display "Welcome to Tip Calculator!"
     display ""
@@ -1086,13 +1100,6 @@ building: tip_calculator
     display "Total: $" added to (total as text)
 
     exit
-```
-
-**tip_calculator/math/math.floor:**
-```steps
-floor: math
-    step: calculate_tip
-    step: round_to_cents
 ```
 
 **tip_calculator/math/calculate_tip.step:**

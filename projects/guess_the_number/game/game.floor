@@ -1,3 +1,0 @@
-floor: game
-    step: play_round
-    step: get_feedback

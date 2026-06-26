@@ -1,5 +1,0 @@
-floor: validation
-
-    step: is_positive
-    step: is_even
-

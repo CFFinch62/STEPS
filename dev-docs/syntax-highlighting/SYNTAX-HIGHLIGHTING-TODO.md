@@ -318,7 +318,7 @@ When all tasks are complete:
 - [ ] Type annotations are clear
 - [ ] Punctuation is subtle but visible
 - [ ] Function definitions are prominent
-- [ ] No errors when opening any `.step`, `.floor`, or `.building` file
+- [ ] No errors when opening any `.step` or `.building` file
 
 ## Notes
 

@@ -376,7 +376,7 @@ See the complete project in `/projects/tutorial/lesson_10_floors/`
 ### What's Happening?
 
 - Floors are folders containing related steps
-- Each floor has a `.floor` file listing its steps
+- Floors are declared in the `floors:` section of the building file
 - Steps declare which floor they belong to
 - Floors help organize large projects
 
@@ -390,7 +390,7 @@ See the complete project in `/projects/tutorial/lesson_10_floors/`
 
 ✓ Floors group related functionality
 ✓ One floor per folder
-✓ Floor files list all steps
+✓ Floors are declared in the building's `floors:` section
 ✓ Good organization makes code easier to understand
 
 ---

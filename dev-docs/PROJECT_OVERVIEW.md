@@ -65,13 +65,11 @@ steps/
 
 ```
 my_program/                      # Building folder
-├── my_program.building          # Entry point
+├── my_program.building          # Entry point (includes floors: section)
 ├── floor_one/                   # Floor folder
-│   ├── floor_one.floor          # Floor definition
 │   ├── step_a.step
 │   └── step_b.step
 └── floor_two/
-    ├── floor_two.floor
     └── step_c.step
 ```
 

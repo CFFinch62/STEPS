@@ -1,6 +1,6 @@
 # Steps Language Specification
 
-Version 0.2 - Draft
+Version 2.0
 
 ## 1. Overview
 
@@ -15,9 +15,9 @@ Steps is an educational programming language with:
 | Construct | Purpose | File Extension |
 |-----------|---------|----------------|
 | Building | Complete program entry point | `.building` |
-| Floor | Functional grouping of steps | `.floor` |
+| Floor | Functional grouping of steps | (in `.building`) |
 | Step | Single unit of work | `.step` |
-| Riser | Private helper within a step | (inside .step) |
+| Riser | Private helper within a step | (inside `.step`) |
 
 ### 2.1 Hierarchy
 
@@ -32,15 +32,13 @@ Building (complete program)
 
 ```
 project_name/                    # Building folder (project root)
-    project_name.building        # Main entry point (required)
+    project_name.building        # Main entry point (includes floor declarations)
     
     floor_name/                  # Floor folder
-        floor_name.floor         # Floor definition (required)
         step_one.step            # Step files
         step_two.step
     
     another_floor/
-        another_floor.floor
         another_step.step
 ```
 
@@ -52,6 +50,11 @@ project_name/                    # Building folder (project root)
 building: program_name
 
     note: Optional description
+
+    floors:
+        floor: floor_name
+            step: step_one
+            step: step_two
     
     call step_name storing result in variable
     display variable
@@ -59,15 +62,9 @@ building: program_name
     exit
 ```
 
-### 4.2 Floor Definition
+### 4.2 Floor Declaration
 
-```
-floor: floor_name
-
-    step: step_one
-    step: step_two
-    step: step_three
-```
+Floors are declared inline in the building file's `floors:` section (see 4.1 above).
 
 ### 4.3 Step Definition
 
@@ -116,6 +113,7 @@ step: parent_step
 | Keyword | Purpose |
 |---------|---------|
 | `building:` | Declares main program container |
+| `floors:` | Begins inline floor declarations section |
 | `floor:` | Declares a floor (functional grouping) |
 | `step:` | Declares a step (one per file) |
 | `riser:` | Declares a private helper within a step |

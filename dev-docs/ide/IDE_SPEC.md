@@ -63,7 +63,7 @@ steps_ide/
 | Only Code | Steps IDE |
 |-----------|-----------|
 | FileBrowser (general files) | ProjectBrowser (building/floor/step structure) |
-| Any file type | Only .building, .floor, .step files |
+| Any file type | Only .building and .step files |
 | Generic syntax highlighting | Steps-specific highlighting |
 | No execution | Integrated interpreter |
 | File tabs | Step tabs (grouped by floor) |
@@ -73,16 +73,14 @@ steps_ide/
 The ProjectBrowser replaces FileBrowser with a Steps-aware tree:
 
 ```
-┌─ Project Browser ──────────────────────┐
+┌─ Project Browser ─────────────────────┐
 │ 🏢 price_calculator                    │
 │   📄 price_calculator.building         │
 │   📁 calculations                      │
-│     📋 calculations.floor              │
 │     📝 calc_from_price_and_margin.step │
 │     📝 calc_from_price_and_cost.step   │
 │     📝 calc_from_margin_and_cost.step  │
 │   📁 user_interaction                  │
-│     📋 user_interaction.floor          │
 │     📝 display_menu.step               │
 │     📝 get_number_input.step           │
 │     📝 route_calculation.step          │
@@ -95,15 +93,13 @@ The ProjectBrowser replaces FileBrowser with a Steps-aware tree:
 |------|---------|
 | 🏢 | Building (project root) |
 | 📁 | Floor folder |
-| 📋 | Floor definition file |
 | 📝 | Step file |
 | 📄 | Building file |
 
 ### Project Browser Behavior
 
 - Opening a `.step` file opens it in the editor
-- Opening a `.floor` file shows the floor's steps
-- Opening the `.building` file shows the main program
+- Opening the `.building` file shows the main program (including floors: section)
 - Right-click context menu:
   - New Step (in current floor)
   - New Floor
@@ -317,9 +313,7 @@ Creates the folder structure:
 
 ```
 project_name/
-├── project_name.building
-└── main/
-    └── main.floor
+└── project_name.building
 ```
 
 With starter content:
@@ -329,22 +323,19 @@ With starter content:
 building: project_name
 
     note: Your program starts here
+
+    floors:
+        floor: main
+            note: Add your steps here
     
     exit
-```
-
-**main/main.floor:**
-```
-floor: main
-
-    note: Add your steps here
 ```
 
 ### New Floor
 
 1. Prompts for floor name
 2. Creates `floor_name/` directory
-3. Creates `floor_name/floor_name.floor` with template
+3. Adds the floor declaration to the building's `floors:` section
 4. Refreshes project browser
 
 ### New Step

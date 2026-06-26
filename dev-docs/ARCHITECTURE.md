@@ -21,8 +21,9 @@ Source Files → Lexer → Tokens → Parser → AST → Interpreter → Output
 **Output:** Dictionary of file contents keyed by type and name
 
 **Responsibilities:**
-- Validate project structure (building file exists, floors have definitions)
-- Recursively discover all .building, .floor, and .step files
+- Validate project structure (building file exists)
+- Read inline `floors:` declarations from the building AST
+- Auto-discover floor directories and `.step` files (used for stdlib)
 - Report missing or malformed project structure
 - Return organized collection of source files
 
@@ -93,10 +94,7 @@ class Lexer:
 **Key Functions:**
 ```python
 def parse_building(tokens: List[Token]) -> BuildingNode:
-    """Parse a .building file."""
-
-def parse_floor(tokens: List[Token]) -> FloorNode:
-    """Parse a .floor file."""
+    """Parse a .building file (including optional floors: section)."""
 
 def parse_step(tokens: List[Token]) -> StepNode:
     """Parse a .step file."""
@@ -294,12 +292,10 @@ Multiple errors are reported when possible (don't stop at first).
 ┌─────────────────────────────────────────────────────────────────┐
 │                         User's Project                          │
 │  project/                                                       │
-│  ├── project.building                                          │
+│  ├── project.building          (includes floors: section)       │
 │  ├── floor1/                                                   │
-│  │   ├── floor1.floor                                          │
 │  │   └── step1.step                                            │
 │  └── floor2/                                                   │
-│      ├── floor2.floor                                          │
 │      └── step2.step                                            │
 └─────────────────────────────────────────────────────────────────┘
                               │

@@ -404,13 +404,11 @@ For your standard library, consider this workflow:
 stdlib/
 ├── stdlib.building
 ├── math/
-│   ├── math.floor
 │   ├── add.step
 │   ├── subtract.step
 │   ├── multiply.step
 │   └── divide.step
 ├── text/
-│   ├── text.floor
 │   ├── uppercase.step
 │   ├── lowercase.step
 │   └── reverse.step

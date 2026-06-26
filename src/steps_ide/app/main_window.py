@@ -965,23 +965,36 @@ class StepsIDEMainWindow(QMainWindow):
             # Create project folder
             project_path.mkdir(parents=True)
             
-            # Create the .building file
+            # Create the .building file with inline floor declaration
             building_file = project_path / f"{safe_name}.building"
-            building_content = f"building: {safe_name}\n    note: New Steps project\n    exit\n"
+            building_content = (
+                f"building: {safe_name}\n"
+                f"    note: New Steps project\n"
+                f"\n"
+                f"    floors:\n"
+                f"        floor: main\n"
+                f"            step: first_step\n"
+                f"\n"
+                f"    call first_step\n"
+                f"    exit\n"
+            )
             building_file.write_text(building_content)
             
-            # Create floor1 folder
-            floor1_path = project_path / "floor1"
-            floor1_path.mkdir()
+            # Create main floor folder
+            main_path = project_path / "main"
+            main_path.mkdir()
             
-            # Create floor1.floor file
-            floor_file = floor1_path / "floor1.floor"
-            floor_content = "floor: floor1\n    step: step1\n"
-            floor_file.write_text(floor_content)
-            
-            # Create step1.step file
-            step_file = floor1_path / "step1.step"
-            step_content = "step: step1\n    note: First step\n    return\n"
+            # Create first_step.step file
+            step_file = main_path / "first_step.step"
+            step_content = (
+                "step: first_step\n"
+                "    belongs to: main\n"
+                "    expects: nothing\n"
+                "    returns: nothing\n"
+                "\n"
+                "    do:\n"
+                "        display \"Hello from Steps!\"\n"
+            )
             step_file.write_text(step_content)
             
             # Navigate file browser to the new project
@@ -999,7 +1012,7 @@ class StepsIDEMainWindow(QMainWindow):
         filepath, _ = QFileDialog.getOpenFileName(
             self, "Open File",
             self.file_browser.current_root or str(Path.home()),
-            "Steps Files (*.building *.floor *.step);;All Files (*)"
+            "Steps Files (*.building *.step);;All Files (*)"
         )
         if filepath:
             self.editor_tabs.open_file(filepath)
@@ -1503,8 +1516,8 @@ class StepsIDEMainWindow(QMainWindow):
             return
         
         # Check if it's a Steps file
-        if not any(filepath.endswith(ext) for ext in ['.building', '.floor', '.step']):
-            self.statusbar.showMessage("Not a Steps file (.building, .floor, or .step)", 3000)
+        if not any(filepath.endswith(ext) for ext in ['.building', '.step']):
+            self.statusbar.showMessage("Not a Steps file (.building or .step)", 3000)
             return
         
         # Save first
@@ -1526,8 +1539,8 @@ class StepsIDEMainWindow(QMainWindow):
             return
         
         # Check if it's a Steps file
-        if not any(filepath.endswith(ext) for ext in ['.building', '.floor', '.step']):
-            self.statusbar.showMessage("Not a Steps file (.building, .floor, or .step)", 3000)
+        if not any(filepath.endswith(ext) for ext in ['.building', '.step']):
+            self.statusbar.showMessage("Not a Steps file (.building or .step)", 3000)
             return
         
         # Save first
@@ -1539,7 +1552,7 @@ class StepsIDEMainWindow(QMainWindow):
         
         try:
             from pathlib import Path
-            from steps.parser import parse_building, parse_floor, parse_step
+            from steps.parser import parse_building, parse_step
             
             file_path = Path(filepath)
             
@@ -1554,8 +1567,6 @@ class StepsIDEMainWindow(QMainWindow):
             # Parse based on file extension
             if filepath.endswith('.building'):
                 result = parse_building(source, file_path)
-            elif filepath.endswith('.floor'):
-                result = parse_floor(source, file_path)
             elif filepath.endswith('.step'):
                 result = parse_step(source, file_path)
             else:
@@ -1587,8 +1598,8 @@ class StepsIDEMainWindow(QMainWindow):
             return
         
         # Check if it's a Steps file
-        if not any(filepath.endswith(ext) for ext in ['.building', '.floor', '.step']):
-            self.statusbar.showMessage("Not a Steps file (.building, .floor, or .step)", 3000)
+        if not any(filepath.endswith(ext) for ext in ['.building', '.step']):
+            self.statusbar.showMessage("Not a Steps file (.building or .step)", 3000)
             return
         
         # Save first
@@ -1607,11 +1618,11 @@ class StepsIDEMainWindow(QMainWindow):
             
             # Determine the project directory
             # For .building files, the project is the parent directory
-            # For .step/.floor files, we need to find the project root
+            # For .step files, we need to find the project root
             if filepath.endswith('.building'):
                 project_path = file_path.parent
             else:
-                # For .step/.floor files, find the project root (directory containing .building)
+                # For .step files, find the project root (directory containing .building)
                 project_path = file_path.parent
                 while project_path != project_path.parent:
                     if list(project_path.glob('*.building')):

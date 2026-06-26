@@ -1,6 +1,0 @@
-floor: questions
-    step: build_questions
-    step: ask_question
-    step: select_questions
-    step: show_master_menu
-    step: run_master_level

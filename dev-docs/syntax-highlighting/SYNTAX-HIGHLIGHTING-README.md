@@ -183,7 +183,7 @@ This directory contains complete documentation for the Steps language syntax hig
 
 ### Manual Testing
 1. Open the Steps IDE
-2. Load a `.step`, `.floor`, or `.building` file
+2. Load a `.step` or `.building` file
 3. Verify syntax highlighting appears
 4. Check that all keywords are colored correctly
 

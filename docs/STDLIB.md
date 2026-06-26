@@ -400,7 +400,7 @@ Project floors can override stdlib definitions. If your project has a floor with
 To add new stdlib functions:
 
 1. Create a new `.step` file in the appropriate floor folder
-2. Add the step name to the `.floor` file
+2. The loader will auto-discover it from the floor directory
 3. Rebuild/reinstall the package
 
 ### Naming Conventions
@@ -423,17 +423,14 @@ The stdlib is bundled at: `src/steps/stdlib/`
 ```
 stdlib/
 ├── math/
-│   ├── math.floor
 │   ├── abs.step
 │   ├── max.step
 │   ├── min.step
 │   └── round.step
 ├── strings/
-│   ├── strings.floor
 │   ├── reverse.step
 │   └── repeat_text.step
 └── tui/
-    ├── tui.floor
     ├── menu.step
     ├── table_display.step
     └── divider.step

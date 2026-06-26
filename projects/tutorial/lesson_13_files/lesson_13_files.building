@@ -1,6 +1,12 @@
 building: lesson_13_files
     note: Learn how to read and write files in Steps!
     
+
+    floors:
+        floor: fileops
+            step: demo_text_files
+            step: demo_csv_files
+
     display "========================================"
     display "   Lesson 13: Working with Files"
     display "========================================"

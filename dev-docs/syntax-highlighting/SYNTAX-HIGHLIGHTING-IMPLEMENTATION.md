@@ -39,7 +39,7 @@ Full tree-sitter-based syntax highlighting has been successfully implemented for
   - Handles errors gracefully
   - Caches registration status
 - `steps_editor.py`:
-  - Detects `.step`, `.floor`, `.building` files
+  - Detects `.step` and `.building` files
   - Automatically applies Steps syntax highlighting
   - Falls back to plain text if registration fails
 
@@ -96,7 +96,7 @@ Expected output:
 
 ### Visual Test
 1. Run the Steps IDE
-2. Open any `.step`, `.floor`, or `.building` file
+2. Open any `.step` or `.building` file
 3. Verify that keywords are highlighted in color
 4. Comments should appear in a different color
 5. Identifiers should be visible

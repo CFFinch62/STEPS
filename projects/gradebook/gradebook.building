@@ -1,6 +1,20 @@
 building: gradebook
     note: A gradebook application demonstrating tables, calculations, and file I/O!
     
+
+    floors:
+        floor: data
+            step: load_students
+            step: save_students
+        floor: grades
+            step: add_student
+            step: add_grade
+            step: calculate_average
+        floor: output
+            step: show_menu
+            step: show_students
+            step: show_average
+
     display "========================================"
     display "        Steps Gradebook"
     display "========================================"

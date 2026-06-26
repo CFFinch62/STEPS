@@ -31,7 +31,7 @@ def _is_project_floor(floor_def, project_path: Optional[Path]) -> bool:
     if not hasattr(floor_def, 'file_path') or floor_def.file_path is None:
         return False
     try:
-        # Check if floor's file is within the project directory
+        # Check if floor's building file is within the project directory
         floor_def.file_path.resolve().relative_to(project_path.resolve())
         return True
     except ValueError:

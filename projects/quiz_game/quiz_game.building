@@ -1,6 +1,18 @@
 building: quiz_game
     note: A multi-level Steps knowledge assessment quiz
 
+
+    floors:
+        floor: questions
+            step: build_questions
+            step: ask_question
+            step: select_questions
+            step: show_master_menu
+            step: run_master_level
+        floor: scoring
+            step: show_final_score
+            step: get_score_feedback
+
     clear console
 
     call banner with "Steps Quiz Game", 44 storing result in title_banner

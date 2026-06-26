@@ -395,7 +395,7 @@ class CodeEditor(QPlainTextEdit):
         ext = os.path.splitext(filepath)[1].lower()
         
         # Steps file types
-        if ext in ('.building', '.floor', '.step'):
+        if ext in ('.building', '.step'):
             self._highlighter = StepsHighlighter(self.document(), self.theme)
         else:
             # Use generic highlighter for other files
@@ -779,7 +779,7 @@ class EditorTabs(QTabWidget):
         filepath, _ = QFileDialog.getSaveFileName(
             self, "Save As",
             str(Path.home()),
-            "Steps Building (*.building);;Steps Floor (*.floor);;Steps Step (*.step);;All Files (*)"
+            "Steps Building (*.building);;Steps Step (*.step);;All Files (*)"
         )
         
         if filepath:

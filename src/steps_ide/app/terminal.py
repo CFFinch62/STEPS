@@ -847,8 +847,6 @@ class XtermWidget(QWidget):
             command = f'{prefix} run-step "{filepath}"'
         elif filepath.endswith('.building'):
             command = f'{prefix} run "{file_dir}"'
-        elif filepath.endswith('.floor'):
-            command = f'{prefix} run "{file_dir}"'
         else:
             return
         

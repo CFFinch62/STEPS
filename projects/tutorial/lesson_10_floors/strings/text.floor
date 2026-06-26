@@ -1,6 +1,0 @@
-floor: strings
-
-    step: uppercase
-    step: lowercase
-    step: reverse
-

@@ -1,3 +1,0 @@
-floor: strings
-    step: reverse
-    step: repeat_text

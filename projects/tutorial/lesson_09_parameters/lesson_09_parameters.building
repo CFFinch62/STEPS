@@ -2,6 +2,17 @@ building: lesson_09_parameters
     note: Lesson 9 - Steps with Parameters
     note: Learn how to pass data to steps and get results back
     
+
+    floors:
+        floor: math
+            step: add_numbers
+            step: subtract_numbers
+            step: multiply_numbers
+            step: divide_numbers
+            step: calculate_area
+        floor: string
+            step: greet_person
+
     display "=== Steps with Parameters ==="
     display ""
     
@@ -49,4 +60,3 @@ building: lesson_09_parameters
     display "The area is: " added to (area as text)
     
     exit
-

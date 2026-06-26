@@ -84,6 +84,139 @@ class TestParseBuilding:
 
 
 # =============================================================================
+# Building File with Floors Tests
+# =============================================================================
+
+class TestParseBuildingFloors:
+    """Tests for parsing building files with inline 'floors:' section."""
+    
+    def test_building_with_single_floor(self):
+        source = """building: my_app
+
+    floors:
+        floor: main
+            step: greet
+            step: farewell
+
+    display "Starting"
+    exit
+"""
+        result = parse_building(source)
+        assert result.success
+        assert isinstance(result.ast, BuildingNode)
+        assert result.ast.name == "my_app"
+        assert len(result.ast.floors) == 1
+        assert result.ast.floors[0].name == "main"
+        assert result.ast.floors[0].steps == ["greet", "farewell"]
+        # Body should have display + exit
+        assert len(result.ast.body) == 2
+    
+    def test_building_with_multiple_floors(self):
+        source = """building: calculator
+
+    floors:
+        floor: math_ops
+            step: add_numbers
+            step: subtract_numbers
+            step: multiply_numbers
+        floor: output
+            step: show_result
+            step: show_menu
+
+    call show_menu
+    exit
+"""
+        result = parse_building(source)
+        assert result.success
+        assert len(result.ast.floors) == 2
+        
+        math_floor = result.ast.floors[0]
+        assert math_floor.name == "math_ops"
+        assert math_floor.steps == ["add_numbers", "subtract_numbers", "multiply_numbers"]
+        
+        output_floor = result.ast.floors[1]
+        assert output_floor.name == "output"
+        assert output_floor.steps == ["show_result", "show_menu"]
+    
+    def test_building_with_floors_and_notes(self):
+        source = """building: app
+
+    note: This is a cool app
+
+    floors:
+        floor: helpers
+            step: utility
+
+    display "Hello"
+    exit
+"""
+        result = parse_building(source)
+        assert result.success
+        assert len(result.ast.floors) == 1
+        assert result.ast.floors[0].name == "helpers"
+        # Body should include the note + display + exit
+        assert len(result.ast.body) == 3
+    
+    def test_building_with_floors_and_do_block(self):
+        source = """building: advanced
+
+    floors:
+        floor: calculations
+            step: compute
+
+    do:
+        set x to 10
+        call compute
+        exit
+"""
+        result = parse_building(source)
+        assert result.success
+        assert len(result.ast.floors) == 1
+        assert result.ast.floors[0].name == "calculations"
+        # Body should have set + call + exit from the do: block
+        assert len(result.ast.body) == 3
+    
+    def test_building_with_only_floors_no_body(self):
+        source = """building: lib
+
+    floors:
+        floor: utils
+            step: helper
+"""
+        result = parse_building(source)
+        assert result.success
+        assert len(result.ast.floors) == 1
+        assert result.ast.floors[0].name == "utils"
+        assert len(result.ast.body) == 0
+    
+    def test_building_without_floors_section(self):
+        """Building files without a floors: section should still work."""
+        source = """building: simple
+
+    display "No floors here"
+    exit
+"""
+        result = parse_building(source)
+        assert result.success
+        assert len(result.ast.floors) == 0
+        assert len(result.ast.body) == 2
+    
+    def test_building_floor_with_single_step(self):
+        source = """building: tiny
+
+    floors:
+        floor: main
+            step: only_step
+
+    exit
+"""
+        result = parse_building(source)
+        assert result.success
+        assert len(result.ast.floors) == 1
+        assert result.ast.floors[0].steps == ["only_step"]
+
+
+# =============================================================================
 # Floor File Tests
 # =============================================================================
 

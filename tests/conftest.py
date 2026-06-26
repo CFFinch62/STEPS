@@ -42,8 +42,7 @@ def tmp_project(tmp_path: Path) -> Callable[[str, Dict[str, str]], Path]:
     
     Usage:
         project = tmp_project("my_project", {
-            "my_project.building": "building: my_project\\n    exit\\n",
-            "main/main.floor": "floor: main\\n    step: hello\\n",
+            "my_project.building": "building: my_project\\n    floors:\\n        floor: main\\n            step: hello\\n\\n    exit\\n",
             "main/hello.step": "step: hello\\n    belongs to: main\\n    ..."
         })
     
@@ -71,8 +70,24 @@ def make_steps_value() -> Callable:
 
 # Test data helpers
 
-def minimal_building(name: str = "test") -> str:
-    """Return minimal building source code."""
+def minimal_building(name: str = "test", floors: dict = None) -> str:
+    """Return minimal building source code.
+    
+    Args:
+        name: Building name
+        floors: Optional dict of {floor_name: [step_names]} for inline declarations
+    """
+    if floors:
+        floors_section = "    floors:\n"
+        for floor_name, steps in floors.items():
+            floors_section += f"        floor: {floor_name}\n"
+            for step in steps:
+                floors_section += f"            step: {step}\n"
+        return f"""building: {name}
+
+{floors_section}
+    exit
+"""
     return f"""building: {name}
 
     exit

@@ -39,18 +39,12 @@ Example:
         exit
 ```
 
-#### MISSING_FLOOR_FILE
+#### MISSING_STEP_FILE
 ```
-Error in calculations/:
-    Found step files but no floor definition.
+Error in tip_calculator.building:
+    Floor 'math' declares step 'calculate_tip' but file not found.
 
-Every floor folder needs a .floor file listing its steps.
-Create 'calculations.floor' with:
-
-    floor: calculations
-    
-        step: calc_from_price_and_margin
-        step: calc_from_price_and_cost
+Create 'math/calculate_tip.step' or remove the step from the floors: section.
 ```
 
 #### STEP_NOT_IN_FLOOR
@@ -68,12 +62,13 @@ Either:
 
 #### FLOOR_STEP_MISMATCH
 ```
-Error in user_interaction.floor:
-    Step 'display_menu' is listed but file 'display_menu.step' not found.
+Error in project.building:
+    Floor 'user_interaction' declares step 'display_menu' but 
+    file 'user_interaction/display_menu.step' not found.
 
 Either:
   - Create the file 'user_interaction/display_menu.step', or
-  - Remove 'step: display_menu' from the floor definition
+  - Remove 'step: display_menu' from the floors: section
 ```
 
 ### Lexer Errors
@@ -420,7 +415,7 @@ Use 'attempt' to handle this gracefully:
 | Code | Category | Brief Description |
 |------|----------|-------------------|
 | E001 | Structure | Missing building file |
-| E002 | Structure | Missing floor file |
+| E002 | Structure | Step declared in floor but file not found |
 | E003 | Structure | Step not in declared floor |
 | E004 | Structure | Floor lists missing step |
 | E101 | Lexer | Invalid character |

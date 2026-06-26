@@ -110,20 +110,18 @@ set words to "a,b,c" split by ","
 
 ## Program Structure
 
-### Building (Entry Point)
+### Building with Floors (Entry Point)
 ```steps
 building: project_name
     note: Optional description
 
+    floors:
+        floor: my_floor
+            step: step_one
+            step: step_two
+
     statements
     exit
-```
-
-### Floor Definition
-```steps
-floor: my_floor
-    step: step_one
-    step: step_two
 ```
 
 ### Step Definition
@@ -234,13 +232,11 @@ end note
 
 ```
 my_project/
-├── my_project.building    # Entry point
+├── my_project.building    # Entry point (includes floors: section)
 ├── floor1/
-│   ├── floor1.floor       # Floor definition
 │   ├── step1.step         # Step files
 │   └── step2.step
 └── floor2/
-    ├── floor2.floor
     └── step3.step
 ```
 

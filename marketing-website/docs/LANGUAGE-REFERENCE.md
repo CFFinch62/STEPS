@@ -2,7 +2,7 @@
 
 > **Complete reference for the Steps programming language**
 
-Version 1.0
+Version 2.0
 
 ---
 
@@ -23,6 +23,7 @@ Version 1.0
 13. [Comments](#13-comments)
 14. [Reserved Words](#14-reserved-words)
 15. [File Extensions](#15-file-extensions)
+16. [Standard Library](#16-standard-library)
 
 ---
 
@@ -200,13 +201,11 @@ set bool to text as boolean        # true
 
 ```
 project_name/                    # Project folder
-├── project_name.building        # Entry point (required)
+├── project_name.building        # Entry point (required, includes floor declarations)
 ├── floor_name/                  # Floor folder
-│   ├── floor_name.floor         # Floor definition
 │   ├── step_one.step            # Step files
 │   └── step_two.step
 └── another_floor/
-    ├── another_floor.floor
     └── another_step.step
 ```
 
@@ -352,7 +351,9 @@ false                       # Boolean
 nothing                     # Nothing
 [1, 2, 3]                   # List
 ["key": "value"]            # Table
+[:]                         # Empty Table
 ```
+
 
 ### 6.2 Variable References
 
@@ -387,7 +388,18 @@ set text to 42 as text
 set bool to 1 as boolean
 ```
 
-### 6.6 Grouped Expressions
+### 6.6 Number Formatting
+
+Format numbers with a specific number of decimal places using `as decimal(N)`:
+
+```steps
+set pi to 3.14159
+display pi as decimal(2)       # "3.14"
+display pi as decimal(4)       # "3.1416"
+display 5 as decimal(2)        # "5.00"
+```
+
+### 6.7 Grouped Expressions
 
 ```steps
 set result to (a + b) * c
@@ -417,7 +429,43 @@ display expression
 display "Hello, " added to name
 ```
 
-### 7.3 Return Statement
+Outputs the expression followed by a newline.
+
+### 7.3 Indicate Statement
+
+```steps
+indicate expression
+indicate "Loading..."
+```
+
+Outputs the expression **without** a newline. Useful for creating progress bars and dynamic console output.
+
+**Example: Progress bar that updates in place**
+```steps
+set i to 0
+repeat while i is less than or equal to 100
+    call progress_bar with i, 100, 40 storing result in bar
+    indicate "\r" added to "Progress: " added to bar
+    set i to i + 10
+display ""  # Final newline after progress completes
+```
+
+### 7.4 Clear Console Statement
+
+```steps
+clear console
+```
+
+Clears the terminal screen using ANSI escape sequences. Works on Windows 10+, Linux, and macOS.
+
+**Example:**
+```steps
+display "This will be cleared..."
+clear console
+display "Screen is now clear!"
+```
+
+### 7.5 Return Statement
 
 ```steps
 return expression
@@ -517,6 +565,32 @@ repeat while condition
 
 Currently, Steps does not have `break` or `continue`. Use conditionals within loops instead.
 
+### 8.8 Iteration Limit
+
+To prevent infinite loops, Steps enforces a maximum iteration limit (default: 10,000,000 iterations). You can temporarily adjust this limit when needed:
+
+```steps
+set iteration limit to 100000
+```
+
+**Example:**
+```steps
+note: Temporarily lower the limit for testing
+set iteration limit to 50
+
+set counter to 0
+attempt:
+    repeat while counter is less than 100
+        set counter to counter + 1
+if unsuccessful:
+    display "Loop stopped at iteration " added to (counter as text)
+
+note: Reset to default
+set iteration limit to 10000000
+```
+
+The iteration limit must be a positive number. This is a safety feature to prevent runaway loops.
+
 ---
 
 ## 9. Steps and Risers
@@ -597,13 +671,23 @@ step: parent_step
 
 ## 10. Floors and Buildings
 
-### 10.1 Floor Definition
+### 10.1 Floor Declaration
+
+Floors are declared inline in the building file using the `floors:` section:
 
 ```steps
-floor: floor_name
-    step: step_one
-    step: step_two
-    step: step_three
+building: project_name
+    note: Optional description
+
+    floors:
+        floor: floor_one
+            step: step_a
+            step: step_b
+        floor: floor_two
+            step: step_c
+
+    statements
+    exit
 ```
 
 ### 10.2 Building Definition
@@ -612,12 +696,17 @@ floor: floor_name
 building: project_name
     note: Optional description
 
+    floors:
+        floor: floor_name
+            step: step_one
+            step: step_two
+
     statements
     exit
 ```
 
 > **Note:** Buildings do **not** use `declare:` or `do:` sections — those belong to steps and risers only.
-> Write statements directly inside the indented building body.
+> Write statements directly inside the indented building body, after the `floors:` section.
 
 ### 10.3 Building Sections
 
@@ -828,12 +917,13 @@ as  fixed  set  to
 
 ### Invocation Keywords
 ```
-call  with  storing  result  in  return  display  input
+call  with  storing  result  in  return  display  indicate  input
 ```
 
 ### Control Flow Keywords
 ```
 if  otherwise  repeat  times  for  each  while
+exit  clear  console  set  iteration  limit
 ```
 
 ### Error Handling Keywords
@@ -868,14 +958,17 @@ true  false  nothing
 problem_message
 ```
 
+> [!CAUTION]
+> **Reserved words cannot be used as:** floor names, step names, parameter names, or variable names.
+> For example, `text` and `times` are keywords and will cause parse errors if used as identifiers.
+
 ---
 
 ## 15. File Extensions
 
 | Extension | Purpose | Required Contents |
 |-----------|---------|-------------------|
-| `.building` | Program entry point | `building:` declaration |
-| `.floor` | Floor definition | `floor:` declaration |
+| `.building` | Program entry point | `building:` declaration, optional `floors:` section |
 | `.step` | Step implementation | `step:` declaration |
 
 ### Naming Conventions
@@ -887,45 +980,13 @@ problem_message
 **Examples:**
 ```
 my_project/
-├── my_project.building      # building: my_project
+├── my_project.building      # building: my_project (includes floors: section)
 ├── data_processing/
-│   ├── data_processing.floor    # floor: data_processing
 │   ├── load_data.step           # step: load_data
 │   └── validate_data.step       # step: validate_data
 └── output/
-    ├── output.floor             # floor: output
     └── format_report.step       # step: format_report
 ```
-
----
-
-## 16. Standard Library (Selected)
-
-### Date & Time Functions (Native)
-
-| Function | Parameters | Returns | Description |
-|----------|------------|---------|-------------|
-| `time` | *(none)* | `number` | Unix timestamp (float seconds since epoch) |
-| `date` | *(none)* | `text` | Today's date as `"YYYY-MM-DD"` |
-| `date_diff` | `date1, date2` | `number` | Days between two ISO dates (`date2 − date1`) |
-
-```steps
-note: performance timing
-call time storing result in start
-repeat 10000 times
-    set x to 1 + 1
-call time storing result in finish
-set elapsed to finish - start
-display "Elapsed seconds: " added to elapsed as text
-
-note: today's date and date math
-call date storing result in today
-display today                                         # e.g. "2026-02-18"
-call date_diff with "2026-01-01", "2026-12-31" storing result in days
-display days                                          # 364
-```
-
-> **See also:** [STDLIB.md](STDLIB.md) for complete standard library documentation.
 
 ---
 
@@ -934,8 +995,8 @@ display days                                          # 364
 ### Program Structure
 ```
 program     → building
-building    → "building:" IDENTIFIER note? statement*
-floor       → "floor:" IDENTIFIER step_list
+building    → "building:" IDENTIFIER note? floors_section? statement*
+floors_sec  → "floors:" ("floor:" IDENTIFIER ("step:" IDENTIFIER)*)*
 step        → "step:" IDENTIFIER step_sections
 riser       → "riser:" IDENTIFIER riser_sections
 ```
@@ -948,9 +1009,10 @@ riser_sections → expects? returns? declare? do
 
 ### Statements
 ```
-statement → set_stmt | display_stmt | call_stmt | return_stmt
-          | if_stmt | repeat_stmt | attempt_stmt | add_stmt
-          | remove_stmt | exit_stmt
+statement → set_stmt | display_stmt | indicate_stmt | clear_console_stmt
+          | call_stmt | return_stmt | if_stmt | repeat_stmt
+          | attempt_stmt | add_stmt | remove_stmt | exit_stmt
+          | set_iteration_limit_stmt
 ```
 
 ### Expressions
@@ -1002,7 +1064,7 @@ Steps provides educational error messages that explain what went wrong and how t
 | Error | Cause | Example |
 |-------|-------|---------|
 | E401 | Missing building file | No `.building` in project folder |
-| E402 | Missing floor file | Floor folder without `.floor` file |
+| E402 | Missing step file | Step declared in floor but file not found |
 | E403 | Step not in floor | Step without `belongs to:` |
 
 ---
@@ -1015,6 +1077,10 @@ Here is a complete, working Steps program:
 ```steps
 building: tip_calculator
     note: Calculate tip and total for a restaurant bill
+
+    floors:
+        floor: math
+            step: calculate_tip
 
     display "Welcome to Tip Calculator!"
     display ""
@@ -1034,13 +1100,6 @@ building: tip_calculator
     display "Total: $" added to (total as text)
 
     exit
-```
-
-**tip_calculator/math/math.floor:**
-```steps
-floor: math
-    step: calculate_tip
-    step: round_to_cents
 ```
 
 **tip_calculator/math/calculate_tip.step:**
@@ -1083,6 +1142,117 @@ step: round_to_cents
         set rounded to amount
         return rounded
 ```
+
+---
+
+## 16. Standard Library
+
+Steps includes a bundled standard library that's automatically available to all buildings.
+
+### Basic Math
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `abs` | `n as number` | `number` | Absolute value |
+| `max` | `a, b as number` | `number` | Larger of two |
+| `min` | `a, b as number` | `number` | Smaller of two |
+| `round` | `n as number` | `number` | Round to nearest |
+
+### Math Operators
+
+| Operator | Keyword | Description |
+|----------|---------|-------------|
+| `%` | `modulo` | Remainder after division |
+
+### List Creation (Native)
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `create_list` | `size, value` | `list` | Create a list of `size` elements all set to `value` |
+
+```steps
+call create_list with 10, 0 storing result in counters    # [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+call create_list with 5, true storing result in flags     # [true, true, true, true, true]
+```
+
+### List Math (Native)
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `list_min` | `lst` | `number` | Smallest in numeric list |
+| `list_max` | `lst` | `number` | Largest in numeric list |
+| `list_sum` | `lst` | `number` | Sum of numeric list |
+
+### Power and Root (Native)
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `sqr` | `n` | `number` | n² |
+| `sqrt` | `n` | `number` | Square root |
+| `pow` | `base, exp` | `number` | base^exp |
+| `pi` | *(none)* | `number` | π constant |
+
+### Trigonometry (Native, radians)
+
+| Function | Parameters | Returns |
+|----------|------------|---------|
+| `sin` | `n` | `number` |
+| `cos` | `n` | `number` |
+| `tan` | `n` | `number` |
+| `asin` | `n` | `number` |
+| `acos` | `n` | `number` |
+| `atan` | `n` | `number` |
+| `atan2` | `y, x` | `number` |
+| `degrees` | `n` | `number` |
+| `radians` | `n` | `number` |
+
+### Logarithms and Exponentials (Native)
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `log` | `n` | `number` | Natural log (ln) |
+| `log10` | `n` | `number` | Base-10 log |
+| `log2` | `n` | `number` | Base-2 log |
+| `exp` | `n` | `number` | e^n |
+
+### Strings Functions
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `uppercase` | `s as text` | `text` | To uppercase |
+| `lowercase` | `s as text` | `text` | To lowercase |
+| `trim` | `s as text` | `text` | Remove whitespace |
+| `reverse` | `s as text` | `text` | Reverse text |
+| `repeat_text` | `s, count` | `text` | Repeat N times |
+
+### Date & Time Functions (Native)
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `time` | *(none)* | `number` | Unix timestamp (float seconds since epoch) |
+| `date` | *(none)* | `text` | Today's date as `"YYYY-MM-DD"` |
+| `date_diff` | `date1, date2` | `number` | Days between two ISO dates (`date2 − date1`) |
+
+### Random Functions (Native)
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `random_int` | `min, max` | `number` | Random integer in range |
+| `random_choice` | `lst` | `any` | Pick from list |
+
+### Example
+
+```steps
+call abs with -5 storing result in x               # 5
+call sqr with 4 storing result in s                # 16
+call sqrt with 25 storing result in r              # 5
+call list_sum with [1, 2, 3, 4] storing result in t  # 10
+set remainder to 17 % 5                            # 2
+call random_int with 1, 100 storing result in rnd  # random
+```
+
+> **See also:** [STDLIB.md](STDLIB.md) for complete documentation.
+
 
 ---
 

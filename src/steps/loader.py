@@ -36,14 +36,16 @@ class Loader:
     A Steps project has the following structure:
     
     project_name/
-    ├── project_name.building    # Entry point
+    ├── project_name.building    # Entry point (includes floor declarations)
     ├── floor_one/
-    │   ├── floor_one.floor      # Floor definition
     │   ├── step_a.step
     │   └── step_b.step
     └── floor_two/
-        ├── floor_two.floor
         └── step_c.step
+    
+    Floor declarations are specified in the building file via a 'floors:' section.
+    If no 'floors:' section is present, step files are auto-discovered from
+    subdirectories using the directory name as the floor name.
     """
     
     def __init__(self, project_path: Path):
@@ -124,18 +126,102 @@ class Loader:
         # Load standard library first (project floors can override)
         self._load_stdlib(environment)
 
-        # Load all project floors and steps
-        floor_dirs = [d for d in self.project_path.iterdir() if d.is_dir()]
-        for floor_dir in floor_dirs:
-            floor_file = floor_dir / f"{floor_dir.name}.floor"
-            if floor_file.exists():
-                floor_result = self._load_floor(floor_file, floor_dir, environment)
-                if not floor_result.success:
-                    for error in floor_result.errors:
-                        result.add_error(error)
+        # Load floors and steps
+        if building_node.floors:
+            # Use explicit floor declarations from the building file
+            for floor_node in building_node.floors:
+                floor_dir = self.project_path / floor_node.name
+                self._register_floor_and_steps(
+                    floor_node, floor_dir, building_file, environment, result
+                )
+        else:
+            # Auto-discover: scan subdirectories for .step files
+            self._auto_discover_floors(environment, result)
 
         result.building = building_node
         return result
+    
+    def _register_floor_and_steps(
+        self,
+        floor_node: FloorNode,
+        floor_dir: Path,
+        building_file: Path,
+        environment: Environment,
+        result: LoadResult
+    ) -> None:
+        """Register a floor and load all its step files.
+        
+        Args:
+            floor_node: The parsed floor declaration
+            floor_dir: Directory containing the step files
+            building_file: Path to the building file (for error reporting)
+            environment: The environment to register into
+            result: LoadResult for error accumulation
+        """
+        # Register the floor
+        floor_def = FloorDefinition(
+            name=floor_node.name,
+            steps=floor_node.steps,
+            file_path=building_file
+        )
+        environment.register_floor(floor_def)
+
+        # Load each step file
+        for step_name in floor_node.steps:
+            step_file = floor_dir / f"{step_name}.step"
+            if not step_file.exists():
+                result.add_error(StructureError(
+                    code=ErrorCode.E003,
+                    message=f"Step file '{step_name}.step' not found in floor '{floor_node.name}'.",
+                    file=building_file,
+                    line=0,
+                    column=0,
+                    hint=f"Create the file '{step_file}' or remove '{step_name}' from the floor definition."
+                ))
+                continue
+            
+            step_result = self._load_step(step_file, environment)
+            if not step_result.success:
+                for error in step_result.errors:
+                    result.add_error(error)
+    
+    def _auto_discover_floors(
+        self,
+        environment: Environment,
+        result: LoadResult
+    ) -> None:
+        """Auto-discover floors by scanning subdirectories for .step files.
+        
+        Each subdirectory that contains .step files becomes a floor.
+        Step files' 'belongs to:' declarations are used for floor assignment.
+        """
+        floor_dirs = sorted(
+            d for d in self.project_path.iterdir()
+            if d.is_dir() and not d.name.startswith('.')
+        )
+        
+        for floor_dir in floor_dirs:
+            step_files = sorted(floor_dir.glob("*.step"))
+            if not step_files:
+                continue
+            
+            floor_name = floor_dir.name
+            step_names = [sf.stem for sf in step_files]
+            
+            # Register the floor
+            floor_def = FloorDefinition(
+                name=floor_name,
+                steps=step_names,
+                file_path=self.project_path / f"{self.project_path.name}.building"
+            )
+            environment.register_floor(floor_def)
+            
+            # Load each step
+            for step_file in step_files:
+                step_result = self._load_step(step_file, environment)
+                if not step_result.success:
+                    for error in step_result.errors:
+                        result.add_error(error)
     
     def _get_stdlib_path(self) -> Path:
         """Get path to the bundled standard library."""
@@ -146,18 +232,37 @@ class Loader:
         
         The stdlib is loaded first, so project floors can override
         stdlib definitions if they use the same names.
+        
+        Uses auto-discovery: each subdirectory becomes a floor,
+        and all .step files within are registered as steps.
         """
         stdlib_path = self._get_stdlib_path()
         if not stdlib_path.exists():
             return  # No stdlib bundled, that's okay
         
-        # Load each floor in stdlib
-        for floor_dir in stdlib_path.iterdir():
-            if floor_dir.is_dir():
-                floor_file = floor_dir / f"{floor_dir.name}.floor"
-                if floor_file.exists():
-                    # Silently load stdlib floors (no error propagation)
-                    self._load_floor(floor_file, floor_dir, environment)
+        # Load each floor in stdlib via auto-discovery
+        for floor_dir in sorted(stdlib_path.iterdir()):
+            if not floor_dir.is_dir():
+                continue
+            
+            step_files = sorted(floor_dir.glob("*.step"))
+            if not step_files:
+                continue
+            
+            floor_name = floor_dir.name
+            step_names = [sf.stem for sf in step_files]
+            
+            # Register the floor
+            floor_def = FloorDefinition(
+                name=floor_name,
+                steps=step_names,
+                file_path=floor_dir
+            )
+            environment.register_floor(floor_def)
+            
+            # Silently load each step (no error propagation for stdlib)
+            for step_file in step_files:
+                self._load_step(step_file, environment)
 
     
     def _load_building(self, path: Path) -> ParseResult:
@@ -194,86 +299,6 @@ class Loader:
         
         parser = Parser(tokens, path)
         return parser.parse_building()
-    
-    def _load_floor(
-        self, 
-        floor_file: Path, 
-        floor_dir: Path, 
-        environment: Environment
-    ) -> LoadResult:
-        """Load a floor and all its steps."""
-        result = LoadResult(success=True)
-        
-        # Parse the floor file
-        try:
-            source = floor_file.read_text(encoding='utf-8')
-        except IOError as e:
-            result.add_error(StructureError(
-                code=ErrorCode.E001,
-                message=f"Could not read floor file: {e}",
-                file=floor_file,
-                line=0,
-                column=0,
-                hint="Check file permissions and encoding."
-            ))
-            return result
-        
-        lexer = Lexer(source, floor_file)
-        try:
-            tokens = lexer.tokenize()
-        except StepsError as e:
-            result.add_error(e)
-            return result
-        except Exception as e:
-            result.add_error(StructureError(
-                code=ErrorCode.E001,
-                message=f"Lexer error: {e}",
-                file=floor_file,
-                line=0,
-                column=0,
-                hint="Check the file syntax."
-            ))
-            return result
-        
-        parser = Parser(tokens, floor_file)
-        parse_result = parser.parse_floor()
-        
-        if not parse_result.success:
-            for error in parse_result.errors:
-                result.add_error(error)
-            return result
-
-        # Type narrow: at this point ast is FloorNode since success is True
-        floor_node = cast(FloorNode, parse_result.ast)
-
-        # Register the floor
-        floor_def = FloorDefinition(
-            name=floor_node.name,
-            steps=floor_node.steps,
-            file_path=floor_file
-        )
-        environment.register_floor(floor_def)
-
-        # Load each step file
-        for step_name in floor_node.steps:
-            step_file = floor_dir / f"{step_name}.step"
-            if not step_file.exists():
-                result.add_error(StructureError(
-                    code=ErrorCode.E003,
-                    message=f"Step file '{step_name}.step' not found in floor '{floor_node.name}'.",
-                    file=floor_file,
-                    line=0,
-                    column=0,
-                    hint=f"Create the file '{step_file}' or remove '{step_name}' from the floor definition."
-                ))
-                continue
-            
-            step_result = self._load_step(step_file, environment)
-            if not step_result.success:
-                for error in step_result.errors:
-                    result.add_error(error)
-        
-        return result
     
     def _load_step(self, step_file: Path, environment: Environment) -> LoadResult:
         """Load and register a step."""

@@ -190,7 +190,20 @@ class Parser:
     # =========================================================================
     
     def parse_building(self) -> ParseResult:
-        """Parse a .building file."""
+        """Parse a .building file.
+        
+        Supports an optional 'floors:' section before the body:
+        
+            building: name
+                [notes]
+                floors:
+                    floor: name1
+                        step: step_a
+                    floor: name2
+                        step: step_b
+                do:
+                    ...body...
+        """
         self.skip_newlines()
         
         # building: name
@@ -210,19 +223,63 @@ class Parser:
             self.error("Expected indented code block after 'building:'")
             return ParseResult(None, self.errors)
         
-        # Parse body statements (INDENT already consumed)
-        body = self._parse_statements_until_dedent()
+        # Parse optional note statements before floors:/do:
+        floors: List[FloorNode] = []
+        pre_notes: List[StatementNode] = []
+        
+        while self.check(TokenType.NOTE) and not self.check(TokenType.DEDENT, TokenType.EOF):
+            note_token = self.current
+            self.advance()  # consume NOTE
+            pre_notes.append(NoteStatement(
+                location=SourceLocation(file=note_token.file, line=note_token.line, column=note_token.column),
+                text=note_token.value
+            ))
+            self.match(TokenType.NEWLINE)
+            self.skip_newlines()
+        
+        # Check for optional 'floors:' section
+        if self.check(TokenType.FLOORS):
+            self.advance()  # consume 'floors:'
+            self.match(TokenType.NEWLINE)
+            self.skip_newlines()
+            
+            # Expect indented block of floor declarations
+            if self.match(TokenType.INDENT):
+                floors = self._parse_floors_section()
+                self.match(TokenType.DEDENT)
+            
+            self.skip_newlines()
+        
+        # Parse remaining body (may start with 'do:' or just statements)
+        body: List[StatementNode] = list(pre_notes)
+        
+        if self.check(TokenType.DEDENT, TokenType.EOF):
+            # Building with only floors and no body
+            self.match(TokenType.DEDENT)
+        elif self.check(TokenType.DO):
+            # Optional 'do:' section header (borrowed from step file syntax)
+            self.advance()  # consume 'do:'
+            self.match(TokenType.NEWLINE)
+            self.skip_newlines()
+            if self.match(TokenType.INDENT):
+                body.extend(self._parse_statements_until_dedent())
+            # Consume the outer DEDENT for the building block
+            self.match(TokenType.DEDENT)
+        else:
+            # Parse body statements until DEDENT
+            body.extend(self._parse_statements_until_dedent())
         
         node = BuildingNode(
             location=self.location_from(start),
             name=name,
+            floors=floors,
             body=body
         )
         
         return ParseResult(node, self.errors)
     
     def parse_floor(self) -> ParseResult:
-        """Parse a .floor file."""
+        """Parse a floor declaration (used for standalone floor parsing)."""
         self.skip_newlines()
         
         # floor: name
@@ -267,6 +324,66 @@ class Parser:
         )
         
         return ParseResult(node, self.errors)
+    
+    def _parse_floors_section(self) -> List[FloorNode]:
+        """Parse the contents of a 'floors:' section inside a building file.
+        
+        Expects to be called after the INDENT following 'floors:' has been consumed.
+        Parses one or more 'floor:' declarations, each with indented 'step:' lists.
+        
+        Returns:
+            List of FloorNode objects
+        """
+        floors: List[FloorNode] = []
+        
+        while not self.check(TokenType.DEDENT, TokenType.EOF):
+            self.skip_newlines()
+            if self.check(TokenType.DEDENT, TokenType.EOF):
+                break
+            
+            if not self.check(TokenType.FLOOR):
+                self.error(f"Expected 'floor:' declaration in floors section, found '{self.current.value}'")
+                self.advance()
+                continue
+            
+            # floor: name
+            floor_start = self.current
+            self.advance()  # consume FLOOR token
+            
+            floor_name_token = self.expect(TokenType.IDENTIFIER, "Expected floor name after 'floor:'")
+            floor_name = floor_name_token.value
+            
+            self.match(TokenType.NEWLINE)
+            self.skip_newlines()
+            
+            # Parse indented step declarations
+            steps: List[str] = []
+            if self.match(TokenType.INDENT):
+                while not self.check(TokenType.DEDENT, TokenType.EOF):
+                    self.skip_newlines()
+                    if self.check(TokenType.DEDENT, TokenType.EOF):
+                        break
+                    
+                    if self.match(TokenType.STEP):
+                        step_name = self.expect(TokenType.IDENTIFIER, "Expected step name after 'step:'")
+                        steps.append(step_name.value)
+                        self.match(TokenType.NEWLINE)
+                    else:
+                        self.error(f"Expected 'step:' declaration, found '{self.current.value}'")
+                        self.advance()
+                
+                self.match(TokenType.DEDENT)
+            
+            floor_node = FloorNode(
+                location=self.location_from(floor_start),
+                name=floor_name,
+                steps=steps
+            )
+            floors.append(floor_node)
+            
+            self.skip_newlines()
+        
+        return floors
     
     def parse_step(self) -> ParseResult:
         """Parse a .step file."""

@@ -1,6 +1,0 @@
-floor: console_output
-
-    step: show_welcome
-    step: show_menu
-    step: show_contact
-

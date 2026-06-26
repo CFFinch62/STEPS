@@ -23,6 +23,7 @@ class TokenType(Enum):
     # Structure
     BUILDING = auto()          # "building:"
     FLOOR = auto()             # "floor:"
+    FLOORS = auto()            # "floors:"
     STEP = auto()              # "step:"
     RISER = auto()             # "riser:"
     BELONGS_TO = auto()        # "belongs to:"
@@ -204,6 +205,7 @@ KEYWORDS = {
     # Structure (with colon)
     "building": TokenType.BUILDING,
     "floor": TokenType.FLOOR,
+    "floors": TokenType.FLOORS,
     "step": TokenType.STEP,
     "riser": TokenType.RISER,
     "expects": TokenType.EXPECTS,
@@ -275,7 +277,7 @@ KEYWORDS = {
 
 # Keywords that expect a colon immediately after
 COLON_KEYWORDS = {
-    "building", "floor", "step", "riser", "expects", "returns",
+    "building", "floor", "floors", "step", "riser", "expects", "returns",
     "declare", "do", "attempt", "note"
 }
 
@@ -645,6 +647,8 @@ class Lexer:
                     return Token(TokenType.BUILDING, value + ":", self.line, start_col, self.file)
                 elif value == "floor":
                     return Token(TokenType.FLOOR, value + ":", self.line, start_col, self.file)
+                elif value == "floors":
+                    return Token(TokenType.FLOORS, value + ":", self.line, start_col, self.file)
                 elif value == "step":
                     return Token(TokenType.STEP, value + ":", self.line, start_col, self.file)
                 elif value == "riser":

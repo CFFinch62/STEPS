@@ -3,6 +3,25 @@ building: price_calculator
     note: Console Price Calculator
     note: Each calculation requires 2 inputs and produces 3 outputs.
 
+
+    floors:
+        floor: calculations
+            step: calc_from_price_and_margin
+            step: calc_from_price_and_profit
+            step: calc_from_price_and_markup
+            step: calc_from_price_and_cost
+            step: calc_from_margin_and_profit
+            step: calc_from_margin_and_cost
+            step: calc_from_profit_and_markup
+            step: calc_from_profit_and_cost
+            step: calc_from_markup_and_cost
+        floor: user_interaction
+            step: display_menu
+            step: display_values
+            step: get_number_input
+            step: ask_repeat
+            step: route_calculation
+
     display "Console Price Calculator"
     display ""
     display "Each calculation requires 2 inputs and produces 3 outputs."

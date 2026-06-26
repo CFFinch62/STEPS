@@ -1,5 +1,0 @@
-floor: games
-    step: demo_dice_rolls
-    step: demo_random_choice
-    step: play_higher_lower
-    step: coin_flip_simulator

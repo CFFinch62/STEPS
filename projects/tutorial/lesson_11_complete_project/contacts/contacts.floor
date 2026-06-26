@@ -1,7 +1,0 @@
-floor: contacts
-
-    step: add_contact
-    step: list_contacts
-    step: search_contact
-    step: count_contacts
-

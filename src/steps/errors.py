@@ -34,7 +34,7 @@ class ErrorCode:
     
     # Structure Errors (E001-E099)
     E001 = "E001"  # Missing building file
-    E002 = "E002"  # Missing floor file
+    E002 = "E002"  # Step declared in floor but file not found
     E003 = "E003"  # Step not in declared floor
     E004 = "E004"  # Floor lists missing step
     
@@ -96,9 +96,9 @@ ERROR_TEMPLATES = {
     ),
     ErrorCode.E002: ErrorTemplate(
         code=ErrorCode.E002,
-        message="Found step files but no floor definition in '{floor_name}/'.",
-        hint="Every floor folder needs a .floor file listing its steps.\n"
-             "Create '{floor_name}.floor' to declare the steps in this floor."
+        message="Floor '{floor_name}' declares step files not found on disk.",
+        hint="Ensure each step listed in the floors: section has a matching\n"
+             ".step file in the '{floor_name}/' directory."
     ),
     ErrorCode.E003: ErrorTemplate(
         code=ErrorCode.E003,
@@ -112,7 +112,7 @@ ERROR_TEMPLATES = {
         message="Step '{step_name}' is listed in floor but file '{step_name}.step' not found.",
         hint="Either:\n"
              "  - Create the file '{step_name}.step', or\n"
-             "  - Remove 'step: {step_name}' from the floor definition"
+             "  - Remove 'step: {step_name}' from the floors: section"
     ),
     
     # Lexer Errors

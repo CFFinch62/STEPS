@@ -2,6 +2,21 @@ building: lesson_10_floors
     note: Lesson 10 - Organizing with Floors
     note: Learn how to organize related steps into floors
     
+
+    floors:
+        floor: math
+            step: add_together
+            step: subtract
+            step: multiply
+            step: divide
+        floor: strings
+            step: uppercase
+            step: lowercase
+            step: reverse
+        floor: validation
+            step: is_positive
+            step: is_even
+
     display "=== Math Floor ==="
     call add_together with 15, 25 storing result in sum
     call subtract with 50, 20 storing result in difference
@@ -54,4 +69,3 @@ building: lesson_10_floors
         display "The number is odd."
     
     exit
-

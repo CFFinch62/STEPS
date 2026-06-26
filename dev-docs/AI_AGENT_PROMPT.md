@@ -58,13 +58,11 @@ steps/
 
 ```
 project_name/
-├── project_name.building
+├── project_name.building        # includes floors: section
 ├── floor_name/
-│   ├── floor_name.floor
 │   ├── step_one.step
 │   └── step_two.step
 └── another_floor/
-    ├── another_floor.floor
     └── step_three.step
 ```
 
