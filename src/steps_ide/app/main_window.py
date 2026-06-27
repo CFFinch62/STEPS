@@ -1010,7 +1010,7 @@ class StepsIDEMainWindow(QMainWindow):
                 f"    note: New Steps project\n"
                 f"\n"
                 f"    floors:\n"
-                f"        floor: input\n"
+                f"        floor: user_input\n"
                 f"            step: get_input\n"
                 f"        floor: output\n"
                 f"            step: show_output\n"

@@ -260,7 +260,7 @@ building: ▌
     note: 
 
     floors:
-        floor: input
+        floor: user_input
             step: get_input
         floor: output
             step: show_output

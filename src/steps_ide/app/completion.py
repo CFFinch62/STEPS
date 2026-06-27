@@ -135,7 +135,7 @@ SNIPPET_ITEMS = [
         "    note: \n"
         "\n"
         "    floors:\n"
-        "        floor: input\n"
+        "        floor: user_input\n"
         "            step: get_input\n"
         "        floor: output\n"
         "            step: show_output\n"
