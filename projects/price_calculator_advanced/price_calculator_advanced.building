@@ -32,51 +32,27 @@ building: price_calculator_advanced
             step: show_second_menu
             step: show_error
 
-    do:
-        running as text
-        first_choice as number
-        second_choice as number
-        valid1 as text
-        valid2 as text
-        valid_combo as text
-        first_label as text
-        second_label as text
-        first_prompt as text
-        second_prompt as text
-        first_value as number
-        second_value as number
-        price as number
-        margin as number
-        profit as number
-        markup as number
-        cost as number
-        PRICE as number
-        MARGIN as number
-        PROFIT as number
-        MARKUP as number
-        COST as number
-        note: Menu choice constants
-        set PRICE to 1
-        set MARGIN to 2
-        set PROFIT to 3
-        set MARKUP to 4
-        set COST to 5
+    note: Menu choice constants
+    set PRICE to 1
+    set MARGIN to 2
+    set PROFIT to 3
+    set MARKUP to 4
+    set COST to 5
 
-        set running to "yes"
+    set running to "yes"
 
-        loop while running equals "yes"
-            call show_header
+    repeat while running equals "yes"
+        call show_header
 
-            note: Get first choice
-            call show_main_menu
-            call get_menu_choice storing result in first_choice
+        note: Get first choice
+        call show_main_menu
+        call get_menu_choice storing result in first_choice
 
-            note: Validate first choice
-            call is_valid_choice with first_choice storing result in valid1
-            if valid1 equals "no"
-                call show_error with "Invalid choice. Please enter 1-5."
-                loop next
-
+        note: Validate first choice
+        call is_valid_choice with first_choice storing result in valid1
+        if valid1 equals "no"
+            call show_error with "Invalid choice. Please enter 1-5."
+        otherwise
             call get_choice_label with first_choice storing result in first_label
             display ""
             display "You selected: " added to first_label
@@ -92,42 +68,40 @@ building: price_calculator_advanced
             call is_valid_choice with second_choice storing result in valid2
             if valid2 equals "no"
                 call show_error with "Invalid choice. Please enter 1-5."
-                loop next
-
-            note: Validate combination
-            call is_valid_combination with first_choice, second_choice storing result in valid_combo
-            if valid_combo equals "no"
-                if first_choice equals second_choice
-                    call show_error with "You cannot select the same value twice."
+            otherwise
+                note: Validate combination
+                call is_valid_combination with first_choice, second_choice storing result in valid_combo
+                if valid_combo equals "no"
+                    if first_choice equals second_choice
+                        call show_error with "You cannot select the same value twice."
+                    otherwise
+                        call show_error with "Margin and Markup cannot be entered together."
                 otherwise
-                    call show_error with "Margin and Markup cannot be entered together."
-                loop next
+                    call get_choice_label with second_choice storing result in second_label
+                    display ""
+                    display "You selected: " added to second_label
+                    display ""
+                    call show_separator
+                    display ""
 
-            call get_choice_label with second_choice storing result in second_label
-            display ""
-            display "You selected: " added to second_label
-            display ""
-            call show_separator
-            display ""
+                    note: Get the actual values
+                    call get_input_prompt with first_choice storing result in first_prompt
+                    call get_numeric_input with first_prompt storing result in first_value
 
-            note: Get the actual values
-            call get_input_prompt with first_choice storing result in first_prompt
-            call get_numeric_input with first_prompt storing result in first_value
+                    call get_input_prompt with second_choice storing result in second_prompt
+                    call get_numeric_input with second_prompt storing result in second_value
 
-            call get_input_prompt with second_choice storing result in second_prompt
-            call get_numeric_input with second_prompt storing result in second_value
+                    note: Calculate results based on the combination
+                    call calculate with first_choice, second_choice, first_value, second_value storing result in results
 
-            note: Calculate results based on the combination
-            call calculate with first_choice, second_choice, first_value, second_value storing result in price, margin, profit, markup, cost
+                    note: Display results
+                    call show_results with results
 
-            note: Display results
-            call show_results with price, margin, profit, markup, cost
+                    note: Ask to continue
+                    call confirm_continue storing result in running
 
-            note: Ask to continue
-            call confirm_continue storing result in running
+    display ""
+    display "Thank you for using Price Metrics Calculator!"
+    display ""
 
-        display ""
-        display "Thank you for using Price Metrics Calculator!"
-        display ""
-
-        exit
+    exit

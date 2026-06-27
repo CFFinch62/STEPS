@@ -1,7 +1,7 @@
 step: calculate
     belongs to: calculations
     expects: choice1 as number, choice2 as number, val1 as number, val2 as number
-    returns: price as number, margin as number, profit as number, markup as number, cost as number
+    returns: results as table
 
     declare:
         c1 as number
@@ -13,6 +13,7 @@ step: calculate
         profit as number
         markup as number
         cost as number
+        results as table
         PRICE as number
         MARGIN as number
         PROFIT as number
@@ -33,7 +34,7 @@ step: calculate
         set v1 to val1
         set v2 to val2
 
-        if choice1 > choice2
+        if choice1 is greater than choice2
             set c1 to choice2
             set c2 to choice1
             set v1 to val2
@@ -49,28 +50,28 @@ step: calculate
         note: Match combinations (c1 is always the lower number)
         if c1 equals PRICE
             if c2 equals MARGIN
-                call solve_from_price_and_margin with v1, v2 storing result in price, margin, profit, markup, cost
+                call solve_from_price_and_margin with v1, v2 storing result in results
             otherwise if c2 equals PROFIT
-                call solve_from_price_and_profit with v1, v2 storing result in price, margin, profit, markup, cost
+                call solve_from_price_and_profit with v1, v2 storing result in results
             otherwise if c2 equals MARKUP
-                call solve_from_price_and_markup with v1, v2 storing result in price, margin, profit, markup, cost
+                call solve_from_price_and_markup with v1, v2 storing result in results
             otherwise if c2 equals COST
-                call solve_from_price_and_cost with v1, v2 storing result in price, margin, profit, markup, cost
+                call solve_from_price_and_cost with v1, v2 storing result in results
 
         otherwise if c1 equals MARGIN
             if c2 equals PROFIT
-                call solve_from_profit_and_margin with v2, v1 storing result in price, margin, profit, markup, cost
+                call solve_from_profit_and_margin with v2, v1 storing result in results
             otherwise if c2 equals COST
-                call solve_from_cost_and_margin with v2, v1 storing result in price, margin, profit, markup, cost
+                call solve_from_cost_and_margin with v2, v1 storing result in results
 
         otherwise if c1 equals PROFIT
             if c2 equals MARKUP
-                call solve_from_profit_and_markup with v1, v2 storing result in price, margin, profit, markup, cost
+                call solve_from_profit_and_markup with v1, v2 storing result in results
             otherwise if c2 equals COST
-                call solve_from_cost_and_profit with v2, v1 storing result in price, margin, profit, markup, cost
+                call solve_from_cost_and_profit with v2, v1 storing result in results
 
         otherwise if c1 equals MARKUP
             if c2 equals COST
-                call solve_from_cost_and_markup with v2, v1 storing result in price, margin, profit, markup, cost
+                call solve_from_cost_and_markup with v2, v1 storing result in results
 
-        return price, margin, profit, markup, cost
+        return results

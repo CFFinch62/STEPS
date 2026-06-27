@@ -1,16 +1,18 @@
 step: solve_from_price_and_markup
     belongs to: calculations
     expects: price as number, markup as number
-    returns: price as number, margin as number, profit as number, markup as number, cost as number
+    returns: results as table
 
     declare:
         cost as number
         profit as number
         margin as number
+        results as table
 
     do:
         set cost to price / (1 + (markup / 100))
         set profit to price - cost
         set margin to (profit / price) * 100
 
-        return price, margin, profit, markup, cost
+        set results to ["price": price, "margin": margin, "profit": profit, "markup": markup, "cost": cost]
+        return results

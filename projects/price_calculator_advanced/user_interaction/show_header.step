@@ -4,10 +4,11 @@ step: show_header
     returns: nothing
 
     do:
-        display "╔══════════════════════════════════════════╗"
-        display "║       PRICE METRICS CALCULATOR           ║"
-        display "╠══════════════════════════════════════════╣"
-        display "║  Calculate Price, Margin, Profit,        ║"
-        display "║  Markup, and Cost from any two values    ║"
-        display "╚══════════════════════════════════════════╝"
+        clear console
+        
+        call banner with "PRICE METRICS CALCULATOR ", 45 storing result in b
+        display b
+        display ""
+        display "Calculate Price, Margin, Profit, Markup, and Cost"
+        display "from any two entered values    "
         display ""

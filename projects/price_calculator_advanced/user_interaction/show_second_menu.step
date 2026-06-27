@@ -14,21 +14,21 @@ step: show_second_menu
         display "Select SECOND value to enter:"
         display ""
 
-        if first_choice not equals 1
+        if first_choice is not equal to 1
             display "  1. Price ($)"
 
-        if first_choice not equals margin
-            if first_choice not equals markup
+        if first_choice is not equal to margin
+            if first_choice is not equal to markup
                 display "  2. Margin (%)"
 
-        if first_choice not equals 3
+        if first_choice is not equal to 3
             display "  3. Profit ($)"
 
-        if first_choice not equals markup
-            if first_choice not equals margin
+        if first_choice is not equal to markup
+            if first_choice is not equal to margin
                 display "  4. Markup (%)"
 
-        if first_choice not equals 5
+        if first_choice is not equal to 5
             display "  5. Cost ($)"
 
         display ""

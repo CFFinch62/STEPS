@@ -735,6 +735,10 @@ class Parser:
         if self.match(TokenType.NOTE):
             return self.parse_note()
         
+        # note block: ... end note (multi-line comment)
+        if self.match(TokenType.NOTE_BLOCK):
+            return self.parse_note_block()
+        
         # Unknown statement
         self.error(f"Expected statement, found '{self.current.value}'")
         self.synchronize()
@@ -1040,6 +1044,25 @@ class Parser:
             location=self.location_from(start),
             text=text,
             is_block=False
+        )
+    
+    def parse_note_block(self) -> NoteStatement:
+        """Parse a multi-line note block: ... end note comment."""
+        start = self.previous
+        self.match(TokenType.NEWLINE)
+        
+        # Skip all tokens until we find END_NOTE or EOF
+        while not self.check(TokenType.END_NOTE, TokenType.EOF):
+            self.advance()
+        
+        # Consume the END_NOTE token
+        if self.match(TokenType.END_NOTE):
+            self.match(TokenType.NEWLINE)
+        
+        return NoteStatement(
+            location=self.location_from(start),
+            text="(block comment)",
+            is_block=True
         )
     
     # =========================================================================
