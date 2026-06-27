@@ -244,6 +244,16 @@ my_project/
 
 `add`, `added`, `and`, `as`, `attempt`, `belongs`, `boolean`, `building`, `call`, `character`, `clear`, `console`, `contains`, `continue`, `declare`, `display`, `do`, `each`, `else`, `end`, `ends`, `equals`, `exit`, `expects`, `false`, `fixed`, `floor`, `for`, `from`, `greater`, `if`, `in`, `indicate`, `input`, `is`, `iteration`, `less`, `limit`, `list`, `length`, `not`, `note`, `nothing`, `number`, `of`, `or`, `otherwise`, `problem_message`, `remove`, `repeat`, `result`, `return`, `returns`, `riser`, `set`, `split`, `starts`, `step`, `storing`, `table`, `than`, `then`, `times`, `to`, `true`, `type`, `unsuccessful`, `while`, `with`
 
+## IDE Keyboard Shortcuts
+
+| Shortcut | Action |
+|---|---|
+| `Ctrl+Shift+G` | Scaffold from Building (create floor folders + step files) |
+| `Ctrl+D` | Show project diagram |
+| `Ctrl+F5` | Run project |
+| `F6` | Check project syntax |
+| `F5` | Start debugging |
+
 ## IDE Code Completion Shortcuts
 
 | Abbreviation | Expands To |

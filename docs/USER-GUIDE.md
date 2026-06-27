@@ -211,6 +211,7 @@ python -m steps_ide.main
 | Ctrl+Shift+P | Toggle project browser |
 | Ctrl+J | Toggle terminal |
 | Ctrl+D | Show project diagram |
+| Ctrl+Shift+G | Scaffold from Building |
 | Ctrl+F5 | Run Steps project |
 | F5 | Start debugging |
 | Shift+F5 | Stop debugging |
@@ -228,6 +229,7 @@ python -m steps_ide.main
 6. **Integrated Debugger**: Step through code, inspect variables, set breakpoints
 7. **Project Diagram Viewer**: Visualize program architecture with Ctrl+D
 8. **Code Completion**: Context-aware suggestions as you type (see below)
+9. **Scaffold from Building**: Auto-create floor folders and step files from your building's `floors:` section (Ctrl+Shift+G)
 
 ### Code Completion
 
@@ -721,6 +723,32 @@ step: format_currency
         call add_commas with text storing result in with_commas
         set formatted to "$" added to with_commas
         return formatted
+```
+
+### Scaffolding Step Files Automatically
+
+Once you've defined your floors and steps in the building file's `floors:` section, you don't have to create each folder and step file by hand. The IDE can do it for you:
+
+1. Open your `.building` file in the editor
+2. Press **Ctrl+Shift+G** or choose **File → Scaffold from Building...**
+3. The IDE creates all missing floor folders and step files with boilerplate code
+
+Each generated `.step` file includes the `belongs to:`, `expects:`, `returns:`, `declare:`, and `do:` sections — ready for you to fill in.
+
+**Key properties:**
+
+- **Non-destructive**: Existing files are never overwritten. Safe to run repeatedly as you add new floors or steps.
+- **Incremental**: Add more steps to your `floors:` section and re-run — only the new ones are created.
+- The toolbar also has a 🏗️ **Scaffold** button for quick access.
+
+**Typical workflow:**
+
+```
+1. File → New Project...               → Creates project folder + building file + main floor
+2. Edit the floors: section to plan your project structure
+3. File → Scaffold from Building...    → Auto-creates all floor folders and step files
+4. Fill in the step implementations
+5. Add more steps → re-run Scaffold → only new ones created
 ```
 
 ---

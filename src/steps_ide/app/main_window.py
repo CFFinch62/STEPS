@@ -564,6 +564,10 @@ class StepsIDEMainWindow(QMainWindow):
         new_project_action.setShortcut("Ctrl+Shift+N")
         new_project_action.triggered.connect(self._new_project)
 
+        scaffold_action = file_menu.addAction("&Scaffold from Building...")
+        scaffold_action.setShortcut("Ctrl+Shift+G")
+        scaffold_action.triggered.connect(self._scaffold_from_building)
+
         new_folder_action = file_menu.addAction("New Fo&lder in Browser...")
         new_folder_action.triggered.connect(self._new_folder_in_browser)
 
@@ -823,6 +827,11 @@ class StepsIDEMainWindow(QMainWindow):
         save_btn.setToolTip("Save (Ctrl+S)")
         save_btn.triggered.connect(self._save_file)
 
+        # Scaffold from building
+        scaffold_btn = self.toolbar.addAction("🏗️ Scaffold")
+        scaffold_btn.setToolTip("Scaffold from Building (Ctrl+Shift+G)")
+        scaffold_btn.triggered.connect(self._scaffold_from_building)
+
         self.toolbar.addSeparator()
 
         # Run
@@ -1033,6 +1042,137 @@ class StepsIDEMainWindow(QMainWindow):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to create project: {e}")
+
+    # Step scaffold template used by _scaffold_from_building()
+    STEP_TEMPLATE = (
+        "step: {step_name}\n"
+        "    belongs to: {floor_name}\n"
+        "    expects: nothing\n"
+        "    returns: nothing\n"
+        "\n"
+        "    declare:\n"
+        "        note: Add variable declarations here\n"
+        "\n"
+        "    do:\n"
+        '        note: TODO - implement {step_name}\n'
+        '        display "{step_name} called"\n'
+    )
+
+    def _scaffold_from_building(self):
+        """Scaffold floor folders and step files from the current .building file."""
+        # 1. Get the current file path
+        filepath = self.editor_tabs.get_current_filepath()
+        if not filepath:
+            QMessageBox.warning(self, "Scaffold", "No file is currently open.")
+            return
+
+        # 2. Check if it's a .building file
+        if not filepath.endswith('.building'):
+            QMessageBox.warning(
+                self, "Scaffold",
+                "The current file is not a .building file.\n\n"
+                "Please open a .building file first, then try again."
+            )
+            return
+
+        # 3. Save the file first
+        self.editor_tabs.save_current()
+
+        # 4. Parse the building file
+        try:
+            from steps.lexer import Lexer
+            from steps.parser import Parser
+
+            file_path = Path(filepath)
+            source = file_path.read_text(encoding='utf-8')
+            lexer = Lexer(source, file_path)
+            tokens = lexer.tokenize()
+            parser = Parser(tokens, file_path)
+            result = parser.parse_building()
+        except Exception as e:
+            QMessageBox.critical(
+                self, "Scaffold Error",
+                f"Failed to parse building file:\n{e}"
+            )
+            return
+
+        # 5. Check parse result
+        if not result.success:
+            error_msgs = "\n".join(err.format() for err in result.errors)
+            QMessageBox.warning(
+                self, "Scaffold",
+                f"The building file has syntax errors:\n\n{error_msgs}\n\n"
+                "Please fix them and try again."
+            )
+            return
+
+        if not result.ast.floors:
+            QMessageBox.information(
+                self, "Scaffold",
+                "No floors found in the building file.\n\n"
+                "Add a 'floors:' section with floor and step declarations, "
+                "then try again."
+            )
+            return
+
+        # 6-9. Create floor folders and step files
+        project_dir = Path(filepath).parent
+        folders_created = 0
+        files_created = 0
+        skipped = 0
+
+        try:
+            for floor in result.ast.floors:
+                floor_dir = project_dir / floor.name
+
+                # Create floor directory if needed
+                if not floor_dir.exists():
+                    floor_dir.mkdir(parents=True)
+                    folders_created += 1
+
+                # Create step files
+                for step_name in floor.steps:
+                    step_file = floor_dir / f"{step_name}.step"
+                    if step_file.exists():
+                        skipped += 1
+                    else:
+                        content = self.STEP_TEMPLATE.format(
+                            step_name=step_name,
+                            floor_name=floor.name
+                        )
+                        step_file.write_text(content, encoding='utf-8')
+                        files_created += 1
+        except Exception as e:
+            QMessageBox.critical(
+                self, "Scaffold Error",
+                f"Error creating files:\n{e}"
+            )
+            return
+
+        # 10. Refresh the file browser
+        self.file_browser.navigate_to(str(project_dir))
+
+        # 11. Show terminal with results
+        if not self.terminal_container.isVisible():
+            self._toggle_terminal()
+
+        self.terminal.clear_output()
+        self.terminal.write_output(f"Scaffold from Building: {Path(filepath).stem}\n")
+        self.terminal.write_output("-" * 40 + "\n")
+        self.terminal.write_output(
+            f"Created {folders_created} folder(s), "
+            f"{files_created} step file(s). "
+            f"Skipped {skipped} existing.\n"
+        )
+
+        if files_created > 0 or folders_created > 0:
+            self.terminal.write_output("✓ Scaffold complete.\n")
+        else:
+            self.terminal.write_output("Nothing to create — all files already exist.\n")
+
+        self.statusbar.showMessage(
+            f"Scaffold: {folders_created} folders, {files_created} files created", 5000
+        )
     
     def _open_file(self):
         filepath, _ = QFileDialog.getOpenFileName(

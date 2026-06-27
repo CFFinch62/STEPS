@@ -102,6 +102,7 @@ python -m STEPS_ide.main
 The IDE provides a full development environment with:
 - Project browser (Ctrl+Shift+P)
 - Syntax-aware editor with code completion (Ctrl+Space or automatic)
+- Scaffold from Building — auto-create floor folders and step files (Ctrl+Shift+G)
 - Run (F5) and Check (F6) commands
 - Terminal output panel (Ctrl+J)
 - Project diagram viewer (Ctrl+D)

@@ -386,11 +386,22 @@ See the complete project in `/projects/tutorial/lesson_10_floors/`
 2. Create a "text" floor with uppercase, lowercase steps
 3. Use steps from both floors in your building
 
+### Tip: Use Scaffold from Building
+
+Instead of creating each floor folder and step file by hand, let the IDE do it:
+
+1. Define your floors and steps in the building file's `floors:` section
+2. Press **Ctrl+Shift+G** (or **File → Scaffold from Building...**)
+3. The IDE creates all the missing folders and step files with boilerplate code
+
+This is non-destructive — existing files are never overwritten, so you can run it repeatedly as you add more steps.
+
 ### Key Takeaways
 
 ✓ Floors group related functionality
 ✓ One floor per folder
 ✓ Floors are declared in the building's `floors:` section
+✓ Use **Scaffold from Building** (Ctrl+Shift+G) to auto-create floor folders and step files
 ✓ Good organization makes code easier to understand
 
 ---
