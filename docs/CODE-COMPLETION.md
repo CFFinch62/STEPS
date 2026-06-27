@@ -260,8 +260,14 @@ building: ▌
     note: 
 
     floors:
-        floor: main
-            step: 
+        floor: input
+            step: get_input
+        floor: output
+            step: show_output
+        floor: actions
+            step: main_action
+        floor: data
+            step: manage_data
 
     exit
 ```

@@ -116,8 +116,8 @@ The `_check_project_syntax()` method (line 1618-1686) already:
 ## User Workflow
 
 ```
-1. File → New Project...           → Creates project folder + building file + main/ + first_step.step
-2. User edits the floors: section to add floors and steps
+1. File → New Project...           → Creates project folder + building file (with starter floors)
+2. User edits the floors: section to customize floors and steps
 3. File → Scaffold from Building   → Creates all missing floor folders and step files
 4. User fills in the step implementations
 5. (User adds more steps to floors: section → re-runs Scaffold → only new ones created)

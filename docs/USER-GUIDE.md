@@ -727,11 +727,15 @@ step: format_currency
 
 ### Scaffolding Step Files Automatically
 
-Once you've defined your floors and steps in the building file's `floors:` section, you don't have to create each folder and step file by hand. The IDE can do it for you:
+The recommended way to set up a new Steps project is:
 
-1. Open your `.building` file in the editor
-2. Press **Ctrl+Shift+G** or choose **File → Scaffold from Building...**
-3. The IDE creates all missing floor folders and step files with boilerplate code
+1. **Create a project first**: Use **File → New Project...** to create the project folder and a starter `.building` file. This ensures the building file lives inside a proper project directory.
+2. **Edit the `floors:` section** in the generated building file to define the floors and steps your project needs.
+3. **Scaffold**: Press **Ctrl+Shift+G** or choose **File → Scaffold from Building...** — the IDE reads the `floors:` section and creates all missing floor folders and step files with boilerplate code.
+4. **Fill in** the step implementations.
+5. **Grow incrementally**: Add more steps to the `floors:` section and re-run Scaffold — only new files are created.
+
+> **Important:** Always start with **File → New Project...** rather than manually saving a building file. The scaffold command places floor folders next to the building file, so the building file must already be inside a project directory for the structure to be correct.
 
 Each generated `.step` file includes the `belongs to:`, `expects:`, `returns:`, `declare:`, and `do:` sections — ready for you to fill in.
 
@@ -741,10 +745,10 @@ Each generated `.step` file includes the `belongs to:`, `expects:`, `returns:`, 
 - **Incremental**: Add more steps to your `floors:` section and re-run — only the new ones are created.
 - The toolbar also has a 🏗️ **Scaffold** button for quick access.
 
-**Typical workflow:**
+**Workflow at a glance:**
 
 ```
-1. File → New Project...               → Creates project folder + building file + main floor
+1. File → New Project...               → Creates project folder + building file
 2. Edit the floors: section to plan your project structure
 3. File → Scaffold from Building...    → Auto-creates all floor folders and step files
 4. Fill in the step implementations

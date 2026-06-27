@@ -1000,37 +1000,29 @@ class StepsIDEMainWindow(QMainWindow):
             # Create project folder
             project_path.mkdir(parents=True)
             
-            # Create the .building file with inline floor declaration
+            # Create the .building file with starter floor declarations.
+            # No floor folders or step files are created here — the user
+            # edits the floors: section and then uses Scaffold from Building
+            # (Ctrl+Shift+G) to generate the folder/file structure.
             building_file = project_path / f"{safe_name}.building"
             building_content = (
                 f"building: {safe_name}\n"
                 f"    note: New Steps project\n"
                 f"\n"
                 f"    floors:\n"
-                f"        floor: main\n"
-                f"            step: first_step\n"
+                f"        floor: input\n"
+                f"            step: get_input\n"
+                f"        floor: output\n"
+                f"            step: show_output\n"
+                f"        floor: actions\n"
+                f"            step: main_action\n"
+                f"        floor: data\n"
+                f"            step: manage_data\n"
                 f"\n"
-                f"    call first_step\n"
+                f"    note: TODO - add your program logic here\n"
                 f"    exit\n"
             )
             building_file.write_text(building_content)
-            
-            # Create main floor folder
-            main_path = project_path / "main"
-            main_path.mkdir()
-            
-            # Create first_step.step file
-            step_file = main_path / "first_step.step"
-            step_content = (
-                "step: first_step\n"
-                "    belongs to: main\n"
-                "    expects: nothing\n"
-                "    returns: nothing\n"
-                "\n"
-                "    do:\n"
-                "        display \"Hello from Steps!\"\n"
-            )
-            step_file.write_text(step_content)
             
             # Navigate file browser to the new project
             self.file_browser.navigate_to(str(project_path))
