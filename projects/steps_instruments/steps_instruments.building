@@ -42,6 +42,7 @@ building: steps_instruments
     call hide_cursor
     note: ── Main loop ──
     set iteration limit to 10000000
+    clear console
     repeat while true
         note: ── Generate / read NMEA data ──
         if mode equals "SIM" and not paused

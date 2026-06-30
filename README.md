@@ -254,6 +254,14 @@ STEPS/
 
 ---
 
+## 🚢 Real-World Example Applications
+
+STEPS includes example applications that demonstrate real-world capability beyond teaching exercises. The NMEA 0183 Marine Instruments app parses live serial data from marine electronics and displays navigation instruments including compass heading, GPS position, speed, and wind data.
+
+![NMEA 0183 Marine Instruments — Built with STEPS](images/Step_Instruments_Screenshot.png)
+
+---
+
 ## 🎯 Design Philosophy
 
 1. **Visible Structure** - Program architecture is explicit, not hidden
