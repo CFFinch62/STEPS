@@ -80,6 +80,7 @@ pyinstaller --name="StepsIDE" \
             --add-data "images:images" \
             --hidden-import "PyQt6.QtWebEngineCore" \
             --hidden-import "PyQt6.QtWebEngineWidgets" \
+            --hidden-import "serial" \
             --osx-bundle-identifier "com.steps.stepsIDE" \
             --target-arch x86_64 \
             src/steps_ide/main.py
@@ -100,6 +101,7 @@ pyinstaller --name="steps" \
             --hidden-import "steps_repl.repl" \
             --hidden-import "steps_repl.commands" \
             --hidden-import "steps_repl.environment" \
+            --hidden-import "serial" \
             --target-arch x86_64 \
             src/steps/main.py
 

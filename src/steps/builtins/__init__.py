@@ -138,6 +138,25 @@ from .tui import (
     tui_center_text,
     tui_pad_text,
     tui_progress_bar,
+    tui_move_cursor,
+    tui_set_color,
+    tui_reset_color,
+    tui_hide_cursor,
+    tui_show_cursor,
+)
+
+# System operations
+from .system import (
+    system_sleep,
+    system_poll_key,
+    system_restore_terminal,
+)
+
+# Serial port operations
+from .serial import (
+    serial_open,
+    serial_read_line,
+    serial_close,
 )
 
 # Native functions registry - callable from Steps code
@@ -238,6 +257,19 @@ __all__ = [
     'tui_center_text',
     'tui_pad_text',
     'tui_progress_bar',
+    'tui_move_cursor',
+    'tui_set_color',
+    'tui_reset_color',
+    'tui_hide_cursor',
+    'tui_show_cursor',
+    # System
+    'system_sleep',
+    'system_poll_key',
+    'system_restore_terminal',
+    # Serial
+    'serial_open',
+    'serial_read_line',
+    'serial_close',
     # Date and time functions
     'time_now',
     'date_today',

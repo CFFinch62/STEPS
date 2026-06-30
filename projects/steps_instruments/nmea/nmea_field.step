@@ -1,0 +1,23 @@
+step: nmea_field
+    belongs to: nmea
+    expects: fields, idx
+    returns: value
+
+    note: Safely extract a field by index from a split NMEA sentence.
+    note: Returns "" if index is out of range.
+    note: Also strips any trailing checksum (*XX) from the field.
+
+    do:
+        if idx is less than 0 or idx is greater than or equal to length of fields
+            return ""
+
+        set value to fields[idx]
+
+        note: Strip trailing checksum if present
+        set star_pos to -1
+        call index_of with value, "*" storing result in star_pos
+        if star_pos is greater than or equal to 0
+            call slice with value, 0, star_pos storing result in value
+
+        call trim with value storing result in value
+        return value

@@ -197,6 +197,30 @@ repeat while i is less than or equal to 100
 display ""  # Final newline
 ```
 
+### Cursor and Color (TUI Dashboards)
+```steps
+call hide_cursor
+call move_cursor with 5, 10
+call set_color with 100, 230, 130
+indicate "Green text at row 5, col 10"
+call reset_color
+call show_cursor
+```
+
+### System (Interactive Programs)
+```steps
+call sleep with 0.2                                # Pause 200ms
+call poll_key storing result in k                  # Non-blocking key read
+call restore_terminal                              # Restore normal terminal
+```
+
+### Serial Port (NMEA / Hardware)
+```steps
+call serial_open with "/dev/ttyUSB0", 4800 storing result in h
+call serial_read_line with h storing result in raw_line
+call serial_close with h
+```
+
 ## Type Conversion
 
 ```steps

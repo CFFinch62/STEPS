@@ -12,7 +12,9 @@ from .text import (
 )
 from .tui import (
     tui_box, tui_line, tui_banner, tui_center_text,
-    tui_pad_text, tui_progress_bar
+    tui_pad_text, tui_progress_bar,
+    tui_move_cursor, tui_set_color, tui_reset_color,
+    tui_hide_cursor, tui_show_cursor,
 )
 from .list_math import list_min, list_max, list_sum
 from .collections import list_create
@@ -24,6 +26,8 @@ from .math_functions import (
     math_degrees, math_radians,
     math_log, math_log10, math_log2, math_exp,
 )
+from .system import system_sleep, system_poll_key, system_restore_terminal
+from .serial import serial_open, serial_read_line, serial_close
 
 NATIVE_FUNCTIONS = {
     # Random functions
@@ -216,6 +220,53 @@ NATIVE_FUNCTIONS = {
     "date_diff": {
         "function": date_diff,
         "params": ["date1", "date2"],
+    },
+    # System functions
+    "sleep": {
+        "function": system_sleep,
+        "params": ["duration"],
+    },
+    "poll_key": {
+        "function": system_poll_key,
+        "params": [],
+    },
+    "restore_terminal": {
+        "function": system_restore_terminal,
+        "params": [],
+    },
+    # Serial port functions
+    "serial_open": {
+        "function": serial_open,
+        "params": ["port", "baud"],
+    },
+    "serial_read_line": {
+        "function": serial_read_line,
+        "params": ["handle"],
+    },
+    "serial_close": {
+        "function": serial_close,
+        "params": ["handle"],
+    },
+    # TUI cursor and color
+    "move_cursor": {
+        "function": tui_move_cursor,
+        "params": ["row", "col"],
+    },
+    "set_color": {
+        "function": tui_set_color,
+        "params": ["r", "g", "b"],
+    },
+    "reset_color": {
+        "function": tui_reset_color,
+        "params": [],
+    },
+    "hide_cursor": {
+        "function": tui_hide_cursor,
+        "params": [],
+    },
+    "show_cursor": {
+        "function": tui_show_cursor,
+        "params": [],
     },
 }
 

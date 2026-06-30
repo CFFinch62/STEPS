@@ -225,7 +225,8 @@ class Interpreter:
                     decl.is_fixed
                 )
 
-            # Register risers in current scope
+            # Register risers in current scope (save/restore to handle nesting)
+            previous_risers = getattr(self, '_current_risers', {})
             self._current_risers = step_def.risers
 
             # Execute step body
@@ -238,6 +239,10 @@ class Interpreter:
 
             except ReturnValue as rv:
                 return rv.value
+
+            finally:
+                # Restore parent step's risers
+                self._current_risers = previous_risers
 
         # This should never be reached, but satisfies type checker
         return StepsNothing()

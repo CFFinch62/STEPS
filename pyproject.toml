@@ -51,6 +51,9 @@ ide = [
     "PyQt6-WebEngine>=6.5.0",
     "pywinpty>=2.0.0; sys_platform == 'win32'",
 ]
+serial = [
+    "pyserial>=3.5",
+]
 
 [project.scripts]
 steps = "steps.main:main"

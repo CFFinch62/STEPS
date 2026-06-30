@@ -1,0 +1,17 @@
+step: parse_dpt
+    belongs to: nmea
+    expects: fields, data
+    returns: parsed
+
+    note: Parse a DPT sentence (Depth below transducer).
+
+    do:
+        set parsed to false
+        call nmea_field with fields, 1 storing result in depth_raw
+        if length of depth_raw is greater than 0
+            set d_val to depth_raw as number
+            set d_x10 to d_val * 10
+            call round with d_x10 storing result in d_r
+            set data["depth"] to (d_r / 10) as text
+            set parsed to true
+        return parsed

@@ -1240,6 +1240,34 @@ call create_list with 5, true storing result in flags     # [true, true, true, t
 | `random_int` | `min, max` | `number` | Random integer in range |
 | `random_choice` | `lst` | `any` | Pick from list |
 
+### System Functions (Native)
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `sleep` | `duration` | `nothing` | Pause execution for N seconds (float) |
+| `poll_key` | *(none)* | `text` | Non-blocking key read (`""` if none) |
+| `restore_terminal` | *(none)* | `nothing` | Restore normal terminal mode |
+
+### Serial Port Functions (Native)
+
+Requires `pyserial` (`pip install pyserial`). Imported lazily — the interpreter works without it.
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `serial_open` | `port, baud` | `number` | Open serial port, returns handle |
+| `serial_read_line` | `handle` | `text` | Non-blocking line read (`""` if none) |
+| `serial_close` | `handle` | `nothing` | Close serial port |
+
+### TUI Cursor and Color (Native)
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `move_cursor` | `row, col` | `nothing` | Move cursor (1-based) |
+| `set_color` | `r, g, b` | `nothing` | Set 24-bit RGB foreground |
+| `reset_color` | *(none)* | `nothing` | Reset terminal attributes |
+| `hide_cursor` | *(none)* | `nothing` | Hide cursor |
+| `show_cursor` | *(none)* | `nothing` | Show cursor |
+
 ### Example
 
 ```steps
@@ -1249,6 +1277,8 @@ call sqrt with 25 storing result in r              # 5
 call list_sum with [1, 2, 3, 4] storing result in t  # 10
 set remainder to 17 % 5                            # 2
 call random_int with 1, 100 storing result in rnd  # random
+call sleep with 0.5                                # pause 500ms
+call poll_key storing result in k                  # non-blocking
 ```
 
 > **See also:** [STDLIB.md](STDLIB.md) for complete documentation.

@@ -1,0 +1,44 @@
+step: parse_sentence
+    belongs to: nmea
+    expects: raw, data
+    returns: parsed
+
+    note: Parse a raw NMEA 0183 sentence and update the data table.
+    note: Dispatches to the appropriate sentence handler based on the
+    note: 3-character sentence type (RMC, DPT, MWV, HDT, MTW).
+
+    do:
+        set parsed to false
+
+        note: Skip empty sentences
+        if length of raw is less than 6
+            return false
+
+        note: Strip leading $ if present
+        set sentence to raw
+        if sentence starts with "$"
+            call slice with sentence, 1, length of sentence storing result in sentence
+
+        note: Split into comma-delimited fields
+        set fields to sentence split by ","
+
+        note: Extract the 3-character sentence type from field 0
+        set field0 to fields[0]
+        set f0_len to length of field0
+        if f0_len is less than 3
+            return false
+        call slice with field0, f0_len - 3, f0_len storing result in stype
+
+        note: Dispatch to appropriate handler
+        if stype equals "RMC"
+            call parse_rmc with fields, data storing result in parsed
+        otherwise if stype equals "DPT"
+            call parse_dpt with fields, data storing result in parsed
+        otherwise if stype equals "MWV"
+            call parse_mwv with fields, data storing result in parsed
+        otherwise if stype equals "HDT"
+            call parse_hdt with fields, data storing result in parsed
+        otherwise if stype equals "MTW"
+            call parse_mtw with fields, data storing result in parsed
+
+        return parsed

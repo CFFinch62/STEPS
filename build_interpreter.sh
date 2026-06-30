@@ -40,6 +40,7 @@ pyinstaller --name="steps" \
             --hidden-import "steps_repl.repl" \
             --hidden-import "steps_repl.commands" \
             --hidden-import "steps_repl.environment" \
+            --hidden-import "serial" \
             src/steps/main.py
 
 echo ""

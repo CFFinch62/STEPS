@@ -1,0 +1,17 @@
+step: parse_hdt
+    belongs to: nmea
+    expects: fields, data
+    returns: parsed
+
+    note: Parse an HDT sentence (True heading).
+
+    do:
+        set parsed to false
+        call nmea_field with fields, 1 storing result in hdg_raw
+        if length of hdg_raw is greater than 0
+            set h_val to hdg_raw as number
+            set h_x10 to h_val * 10
+            call round with h_x10 storing result in h_r
+            set data["hdg"] to (h_r / 10) as text
+            set parsed to true
+        return parsed

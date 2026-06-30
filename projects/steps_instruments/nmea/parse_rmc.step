@@ -1,0 +1,36 @@
+step: parse_rmc
+    belongs to: nmea
+    expects: fields, data
+    returns: parsed
+
+    note: Parse an RMC sentence (Recommended Minimum Navigation).
+    note: Updates position, SOG, and COG in the data table.
+
+    do:
+        set parsed to false
+        call nmea_field with fields, 3 storing result in lat
+        call nmea_field with fields, 4 storing result in lat_d
+        call nmea_field with fields, 5 storing result in lon
+        call nmea_field with fields, 6 storing result in lon_d
+        call nmea_field with fields, 7 storing result in sog_raw
+        call nmea_field with fields, 8 storing result in cog_raw
+
+        if length of lat is greater than 0
+            set data["lat"] to lat added to " " added to lat_d
+            set data["lon"] to lon added to " " added to lon_d
+            set data["pos_src"] to "RMC"
+
+        if length of sog_raw is greater than 0
+            set sog_val to sog_raw as number
+            set sog_x10 to sog_val * 10
+            call round with sog_x10 storing result in sog_r
+            set data["sog"] to (sog_r / 10) as text
+
+        if length of cog_raw is greater than 0
+            set cog_val to cog_raw as number
+            set cog_x10 to cog_val * 10
+            call round with cog_x10 storing result in cog_r
+            set data["cog"] to (cog_r / 10) as text
+
+        set parsed to true
+        return parsed

@@ -387,8 +387,95 @@ note: Display a divider
 call divider with "Options", 40
 ```
 
+### Cursor and Color Control (Native)
+
+Direct terminal control for building TUI dashboards. These functions write ANSI escape sequences directly to `stdout`.
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `move_cursor` | `row, col` | `nothing` | Move cursor to position (1-based row and column) |
+| `set_color` | `r, g, b` | `nothing` | Set foreground text color (24-bit RGB, 0–255) |
+| `reset_color` | *(none)* | `nothing` | Reset all terminal text attributes to defaults |
+| `hide_cursor` | *(none)* | `nothing` | Hide the terminal cursor |
+| `show_cursor` | *(none)* | `nothing` | Show the terminal cursor |
+
+```steps
+note: Position text at row 5, column 10
+call hide_cursor
+call move_cursor with 5, 10
+call set_color with 100, 230, 130
+indicate "Hello at (5,10)!"
+call reset_color
+call show_cursor
+```
+
+> [!NOTE]
+> These are intended for full-screen TUI programs that use `clear console` and positioned output. For simple sequential output, use `display` and `indicate` instead.
+
 ---
 
+## System Floor (Native)
+
+Functions for interactive CLI/TUI programs that need timed delays and non-blocking keyboard input.
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `sleep` | `duration as number` | `nothing` | Pause execution for N seconds (float, e.g. `0.2` for 200ms) |
+| `poll_key` | *(none)* | `text` | Non-blocking key check — returns the key character, or `""` if nothing pressed |
+| `restore_terminal` | *(none)* | `nothing` | Restore the terminal to normal line-buffered mode |
+
+### Examples
+
+```steps
+note: Simple delay
+call sleep with 1.5
+
+note: Non-blocking keyboard polling loop
+repeat while true
+    call poll_key storing result in key_press
+    if key_press equals "q"
+        call restore_terminal
+        display "Goodbye!"
+        exit
+    call sleep with 0.1
+```
+
+> [!IMPORTANT]
+> `poll_key` switches the terminal to character-at-a-time mode (cbreak) on first use. Always call `restore_terminal` before exiting, or the user's shell will behave oddly. An `atexit` handler is registered as a safety net, but explicit cleanup is best practice.
+
+---
+
+## Serial Floor (Native)
+
+Serial port operations for reading NMEA 0183 and other serial data. Requires `pyserial` (`pip install pyserial`).
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `serial_open` | `port as text, baud as number` | `number` | Open a serial port; returns an integer handle |
+| `serial_read_line` | `handle as number` | `text` | Non-blocking line read; returns `""` if no data yet |
+| `serial_close` | `handle as number` | `nothing` | Close a previously opened serial port |
+
+### Examples
+
+```steps
+note: Open a serial port for NMEA data
+call serial_open with "/dev/ttyUSB0", 4800 storing result in handle
+
+note: Read lines in a loop
+repeat while true
+    call serial_read_line with handle storing result in nmea_line
+    if length of nmea_line is greater than 0
+        display nmea_line
+    call sleep with 0.1
+
+note: Clean up
+call serial_close with handle
+```
+
+> [!NOTE]
+> `pyserial` is imported lazily — the interpreter works without it installed. Only `serial_open` will raise an error if `pyserial` is missing. Simulator-only programs do not need it.
+
+---
 
 
 Project floors can override stdlib definitions. If your project has a floor with the same name as a stdlib floor, your project's definitions take precedence.
@@ -437,5 +524,6 @@ stdlib/
 ```
 
 > [!NOTE]
-> Native functions (string operations like `lowercase`, `trim`, `slice` and TUI primitives like `box`, `banner`, `line`) are implemented in Python in `builtins/`, not as stdlib .step files.
+> Native functions (string operations like `lowercase`, `trim`, `slice`, TUI primitives like `box`, `banner`, `line`, cursor/color controls like `move_cursor`, `set_color`, system functions like `sleep`, `poll_key`, and serial functions like `serial_open`, `serial_read_line`) are implemented in Python in `builtins/`, not as stdlib .step files.
+
 

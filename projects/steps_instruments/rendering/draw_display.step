@@ -1,0 +1,152 @@
+step: draw_display
+    belongs to: rendering
+    expects: data, nmea_log, mode, paused
+    returns: done
+
+    note: Render the full TUI instrument display.
+    note: Uses move_cursor + set_color + indicate for positioned,
+    note: coloured text output.
+
+    riser: draw_panel
+        expects: row, col, width, label, value, cr, cg, cb
+        returns: ok
+
+        note: Draw a bordered instrument panel.
+        note: If value contains newlines, each line is drawn on its own row.
+
+        do:
+            note: Top border
+            call move_cursor with row, col
+            call set_color with 45, 85, 148
+            call repeat_text with "─", width - 2 storing result in hline
+            indicate "┌" added to hline added to "┐"
+
+            note: Label row
+            call move_cursor with row + 1, col
+            call set_color with 100, 155, 220
+            call pad_text with label, width - 2, "center" storing result in padded_label
+            indicate "│" added to padded_label added to "│"
+
+            note: Separator
+            call move_cursor with row + 2, col
+            call set_color with 35, 65, 110
+            call repeat_text with "─", width - 2 storing result in sep
+            indicate "├" added to sep added to "┤"
+
+            note: Value rows — split on newlines
+            set lines to value split by "\n"
+            set line_offset to 0
+            repeat for each line_text in lines
+                call move_cursor with row + 3 + line_offset, col
+                call set_color with cr, cg, cb
+                call pad_text with line_text, width - 2, "center" storing result in padded_line
+                indicate "│" added to padded_line added to "│"
+                set line_offset to line_offset + 1
+
+            note: Bottom border
+            call move_cursor with row + 3 + line_offset, col
+            call set_color with 45, 85, 148
+            indicate "└" added to hline added to "┘"
+
+            set ok to true
+            return ok
+
+    do:
+        note: Clear the screen
+        clear console
+
+        note: ── Title banner ──
+        call move_cursor with 1, 1
+        call set_color with 255, 210, 55
+        call banner with "STEPS INSTRUMENTS", 78 storing result in title_banner
+        indicate title_banner
+
+        note: Mode and status line
+        call move_cursor with 4, 2
+        call set_color with 180, 200, 255
+        set status_line to "MODE: " added to mode
+        if mode equals "SIM"
+            set status_line to status_line added to "  |  Simulated data"
+        otherwise
+            set status_line to status_line added to "  |  LIVE serial"
+        set status_line to status_line added to "  |  SRC: " added to data["pos_src"]
+        indicate status_line
+
+        if paused
+            call move_cursor with 4, 60
+            call set_color with 255, 80, 80
+            indicate "** PAUSED **"
+
+        note: ── Instrument panels (row 6) ──
+        set pw to 15
+
+        note: POSITION panel — wider for coordinates
+        set src_line to "src: " added to data["pos_src"]
+        set pos_val to data["lat"] added to "\n" added to data["lon"] added to "\n" added to src_line
+        call draw_panel with 6, 1, 22, "POSITION", pos_val, 80, 180, 255
+
+        note: SPEED panel
+        set spd_val to "SOG " added to data["sog"] added to " kts" added to "\n" added to "COG " added to data["cog"] added to "°"
+        call draw_panel with 6, 24, pw, "SPEED", spd_val, 100, 230, 130
+
+        note: DEPTH panel
+        set dpt_val to data["depth"] added to " m"
+        call draw_panel with 6, 39, pw, "DEPTH", dpt_val, 80, 210, 210
+
+        note: HEADING panel
+        set hdg_val to data["hdg"] added to "° M"
+        call draw_panel with 6, 54, pw, "HEADING", hdg_val, 255, 210, 80
+
+        note: WIND panel
+        set wnd_val to data["wind_ang"] added to "° R" added to "\n" added to data["wind_spd"] added to " kts"
+        call draw_panel with 6, 69, pw, "WIND", wnd_val, 200, 160, 255
+
+        note: ── NMEA Log ──
+        call move_cursor with 14, 1
+        call set_color with 45, 85, 148
+        call repeat_text with "─", 78 storing result in log_sep
+        indicate "── NMEA LOG " added to log_sep
+
+        set log_row to 15
+        set log_idx to 0
+        repeat for each entry in nmea_log
+            if log_idx is less than 12
+                call move_cursor with log_row, 2
+                note: Color-code by sentence type
+                if entry contains "RMC"
+                    call set_color with 100, 230, 130
+                otherwise if entry contains "DPT"
+                    call set_color with 80, 210, 210
+                otherwise if entry contains "MWV"
+                    call set_color with 200, 160, 255
+                otherwise if entry contains "HDT"
+                    call set_color with 255, 210, 80
+                otherwise if entry contains "MTW"
+                    call set_color with 255, 140, 80
+                otherwise
+                    call set_color with 140, 155, 170
+
+                note: Truncate long sentences
+                if length of entry is greater than 76
+                    call slice with entry, 0, 76 storing result in entry
+                indicate entry
+                set log_row to log_row + 1
+                set log_idx to log_idx + 1
+
+        note: ── Status bar ──
+        call move_cursor with 28, 1
+        call set_color with 45, 85, 148
+        call repeat_text with "─", 78 storing result in stat_sep
+        indicate stat_sep
+        call move_cursor with 29, 2
+        call set_color with 100, 155, 220
+        indicate "[s] SIM/LIVE  [p] pause  [c] clear  [q] quit"
+        call move_cursor with 29, 60
+        call set_color with 180, 200, 255
+        indicate mode
+
+        note: Reset color at end
+        call reset_color
+
+        set done to true
+        return done

@@ -1,0 +1,17 @@
+step: parse_mtw
+    belongs to: nmea
+    expects: fields, data
+    returns: parsed
+
+    note: Parse an MTW sentence (Water temperature).
+
+    do:
+        set parsed to false
+        call nmea_field with fields, 1 storing result in temp_raw
+        if length of temp_raw is greater than 0
+            set t_val to temp_raw as number
+            set t_x10 to t_val * 10
+            call round with t_x10 storing result in t_r
+            set data["temp"] to (t_r / 10) as text
+            set parsed to true
+        return parsed

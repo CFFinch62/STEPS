@@ -1,0 +1,85 @@
+step: sim_generate
+    belongs to: simulator
+    expects: tick
+    returns: sentences
+
+    note: Generate a list of NMEA sentences for the current simulator tick.
+    note: Values drift realistically using sine waves at different periods.
+
+    do:
+        set sentences to []
+        call pi storing result in pi_val
+        set two_pi to 2 * pi_val
+        set t to tick as number
+
+        note: Calculate drifting instrument values
+        call sin with t * two_pi / 1200 storing result in s1
+        set sog to 7.0 + 2.0 * s1
+
+        call sin with t * two_pi / 1800 storing result in s2
+        set cog to 247.0 + 15.0 * s2
+
+        call sin with t * two_pi / 2700 storing result in s3
+        set depth to 18.5 + 6.5 * s3
+
+        call sin with t * two_pi / 1350 storing result in s4
+        set wind_spd to 13.0 + 5.0 * s4
+
+        call sin with t * two_pi / 3600 storing result in s5
+        set wind_ang to 45.0 + 40.0 * s5
+
+        call sin with t * two_pi / 1350 storing result in s6
+        set hdg to cog + 4.0 * s6 - 2.0
+
+        call sin with t * two_pi / 5400 storing result in s7
+        set water_tmp to 18.5 + 0.5 * s7
+
+        note: Format values to 1 decimal place strings
+        set sog_x to sog * 10
+        call round with sog_x storing result in sog_r
+        set sog_s to (sog_r / 10) as text
+
+        set cog_x to cog * 10
+        call round with cog_x storing result in cog_r
+        set cog_s to (cog_r / 10) as text
+
+        set dpt_x to depth * 10
+        call round with dpt_x storing result in dpt_r
+        set dpt_s to (dpt_r / 10) as text
+
+        set wsp_x to wind_spd * 10
+        call round with wsp_x storing result in wsp_r
+        set wsp_s to (wsp_r / 10) as text
+
+        set wan_x to wind_ang * 10
+        call round with wan_x storing result in wan_r
+        set wan_s to (wan_r / 10) as text
+
+        set hdg_x to hdg * 10
+        call round with hdg_x storing result in hdg_r
+        set hdg_s to (hdg_r / 10) as text
+
+        set tmp_x to water_tmp * 10
+        call round with tmp_x storing result in tmp_r
+        set tmp_s to (tmp_r / 10) as text
+
+        note: Cycle through sentence types — emit one type per tick
+        set seq to tick % 5
+
+        if seq equals 0
+            set s to "$GPRMC,123519,A,4738.11,N,12221.43,W," added to sog_s added to "," added to cog_s added to ",040426,,,*00"
+            add s to sentences
+        otherwise if seq equals 1
+            set s to "$SDDPT," added to dpt_s added to ",0.5*00"
+            add s to sentences
+        otherwise if seq equals 2
+            set s to "$IIMWV," added to wan_s added to ",R," added to wsp_s added to ",N,A*00"
+            add s to sentences
+        otherwise if seq equals 3
+            set s to "$HCHDT," added to hdg_s added to ",T*00"
+            add s to sentences
+        otherwise if seq equals 4
+            set s to "$YXMTW," added to tmp_s added to ",C*00"
+            add s to sentences
+
+        return sentences

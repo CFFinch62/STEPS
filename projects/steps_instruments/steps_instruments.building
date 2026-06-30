@@ -1,0 +1,113 @@
+building: steps_instruments
+    note: NMEA 0183 Marine Instrument Display (CLI/TUI)
+    note: A terminal-based dashboard that displays GPS position, SOG, COG,
+    note: heading, depth, water temperature, and wind from NMEA 0183 data.
+    note: Supports a built-in simulator (SIM mode) and live serial data.
+
+    floors:
+        floor: nmea
+            step: nmea_field
+            step: parse_sentence
+            step: parse_rmc
+            step: parse_dpt
+            step: parse_mwv
+            step: parse_hdt
+            step: parse_mtw
+        floor: simulator
+            step: sim_generate
+        floor: rendering
+            step: draw_display
+
+    note: ── Initialize instrument data table ──
+    set data to [:]
+    set data["lat"] to "---"
+    set data["lon"] to "---"
+    set data["sog"] to "---"
+    set data["cog"] to "---"
+    set data["hdg"] to "---"
+    set data["depth"] to "---"
+    set data["temp"] to "---"
+    set data["wind_ang"] to "---"
+    set data["wind_spd"] to "---"
+    set data["pos_src"] to "---"
+    note: ── NMEA sentence log ──
+    set nmea_log to []
+    set log_max to 12
+    note: ── Application state ──
+    set mode to "SIM"
+    set paused to false
+    set sim_tick to 0
+    set serial_handle to -1
+    note: ── Prepare terminal for TUI ──
+    call hide_cursor
+    note: ── Main loop ──
+    set iteration limit to 10000000
+    repeat while true
+        note: ── Generate / read NMEA data ──
+        if mode equals "SIM" and not paused
+            call sim_generate with sim_tick storing result in sentences
+            repeat for each sentence in sentences
+                note: Parse the sentence (updates data table in place)
+                call parse_sentence with sentence, data
+                note: Add to NMEA log
+                add sentence to nmea_log
+                if length of nmea_log is greater than log_max
+                    set oldest to nmea_log[0]
+                    remove oldest from nmea_log
+            set sim_tick to sim_tick + 1
+        otherwise if mode equals "LIVE" and not paused
+            if serial_handle is greater than or equal to 0
+                call serial_read_line with serial_handle storing result in raw_line
+                if length of raw_line is greater than 1
+                    call parse_sentence with raw_line, data
+                    add raw_line to nmea_log
+                    if length of nmea_log is greater than log_max
+                        set oldest to nmea_log[0]
+                        remove oldest from nmea_log
+        note: ── Draw the display ──
+        call draw_display with data, nmea_log, mode, paused
+        note: ── Handle keyboard input ──
+        call poll_key storing result in key_press
+        if key_press equals "q"
+            note: Clean exit
+            if serial_handle is greater than or equal to 0
+                call serial_close with serial_handle
+            call show_cursor
+            call reset_color
+            call restore_terminal
+            clear console
+            display "Steps Instruments — exited."
+            exit
+        otherwise if key_press equals "s"
+            note: Toggle SIM / LIVE mode
+            if mode equals "SIM"
+                set mode to "LIVE"
+            otherwise
+                if serial_handle is greater than or equal to 0
+                    call serial_close with serial_handle
+                    set serial_handle to -1
+                set mode to "SIM"
+        otherwise if key_press equals "p"
+            note: Toggle pause
+            if paused
+                set paused to false
+            otherwise
+                set paused to true
+            clear console
+        otherwise if key_press equals "c"
+            note: Clear all data
+            set data["lat"] to "---"
+            set data["lon"] to "---"
+            set data["sog"] to "---"
+            set data["cog"] to "---"
+            set data["hdg"] to "---"
+            set data["depth"] to "---"
+            set data["temp"] to "---"
+            set data["wind_ang"] to "---"
+            set data["wind_spd"] to "---"
+            set data["pos_src"] to "---"
+            set nmea_log to []
+            clear console
+        note: ── Pace the loop ──
+        call sleep with 0.2
+    exit

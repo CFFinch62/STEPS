@@ -1,0 +1,26 @@
+step: parse_mwv
+    belongs to: nmea
+    expects: fields, data
+    returns: parsed
+
+    note: Parse an MWV sentence (Wind speed and angle).
+
+    do:
+        set parsed to false
+        call nmea_field with fields, 1 storing result in ang_raw
+        call nmea_field with fields, 3 storing result in spd_raw
+
+        if length of ang_raw is greater than 0
+            set a_val to ang_raw as number
+            set a_x10 to a_val * 10
+            call round with a_x10 storing result in a_r
+            set data["wind_ang"] to (a_r / 10) as text
+
+        if length of spd_raw is greater than 0
+            set s_val to spd_raw as number
+            set s_x10 to s_val * 10
+            call round with s_x10 storing result in s_r
+            set data["wind_spd"] to (s_r / 10) as text
+
+        set parsed to true
+        return parsed

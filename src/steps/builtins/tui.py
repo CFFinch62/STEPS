@@ -4,9 +4,10 @@ Provides functions for drawing boxes, lines, banners, and other text-based
 UI elements using Unicode box-drawing characters.
 """
 
+import sys
 from typing import Optional
 
-from ..types import StepsValue, StepsNumber, StepsText
+from ..types import StepsValue, StepsNumber, StepsText, StepsNothing
 from ..errors import StepsTypeError, StepsRuntimeError, ErrorCode, SourceLocation
 
 
@@ -310,3 +311,90 @@ def tui_progress_bar(
     percent_str = f"{int(percentage)}%"
     
     return StepsText(f"[{bar}] {percent_str}")
+
+
+# =============================================================================
+# Cursor and Color Control (ANSI escape sequences)
+# =============================================================================
+
+def tui_move_cursor(
+    row: StepsValue,
+    col: StepsValue,
+    location: Optional[SourceLocation] = None
+) -> StepsNothing:
+    """Move the terminal cursor to (row, col).  Both are 1-based."""
+    if not isinstance(row, StepsNumber):
+        raise StepsTypeError(
+            code=ErrorCode.E302,
+            message=f"move_cursor row must be a number, got {row.type_name()}.",
+            file=location.file if location else None,
+            line=location.line if location else 0,
+            column=location.column if location else 0,
+            hint='Use: call move_cursor with 1, 1'
+        )
+    if not isinstance(col, StepsNumber):
+        raise StepsTypeError(
+            code=ErrorCode.E302,
+            message=f"move_cursor col must be a number, got {col.type_name()}.",
+            file=location.file if location else None,
+            line=location.line if location else 0,
+            column=location.column if location else 0,
+            hint='Use: call move_cursor with 1, 1'
+        )
+    r = int(row.value)
+    c = int(col.value)
+    sys.stdout.write(f"\033[{r};{c}H")
+    sys.stdout.flush()
+    return StepsNothing()
+
+
+def tui_set_color(
+    r: StepsValue,
+    g: StepsValue,
+    b: StepsValue,
+    location: Optional[SourceLocation] = None
+) -> StepsNothing:
+    """Set the foreground text colour using 24-bit RGB values (0-255)."""
+    if not isinstance(r, StepsNumber):
+        raise StepsTypeError(
+            code=ErrorCode.E302,
+            message=f"set_color red must be a number, got {r.type_name()}.",
+            file=location.file if location else None,
+            line=location.line if location else 0,
+            column=location.column if location else 0,
+            hint='Use: call set_color with 255, 255, 255'
+        )
+    rv = max(0, min(255, int(r.value)))
+    gv = max(0, min(255, int(g.value)))
+    bv = max(0, min(255, int(b.value)))
+    sys.stdout.write(f"\033[38;2;{rv};{gv};{bv}m")
+    sys.stdout.flush()
+    return StepsNothing()
+
+
+def tui_reset_color(
+    location: Optional[SourceLocation] = None
+) -> StepsNothing:
+    """Reset terminal colours and text attributes to defaults."""
+    sys.stdout.write("\033[0m")
+    sys.stdout.flush()
+    return StepsNothing()
+
+
+def tui_hide_cursor(
+    location: Optional[SourceLocation] = None
+) -> StepsNothing:
+    """Hide the terminal cursor (for clean TUI rendering)."""
+    sys.stdout.write("\033[?25l")
+    sys.stdout.flush()
+    return StepsNothing()
+
+
+def tui_show_cursor(
+    location: Optional[SourceLocation] = None
+) -> StepsNothing:
+    """Show the terminal cursor (call before exiting a TUI program)."""
+    sys.stdout.write("\033[?25h")
+    sys.stdout.flush()
+    return StepsNothing()
+

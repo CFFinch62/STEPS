@@ -46,6 +46,7 @@ pyinstaller --name="StepsIDE" \
             --hidden-import "PyQt6.sip" \
             --hidden-import "PyQt6.QtWebEngineCore" \
             --hidden-import "PyQt6.QtWebEngineWidgets" \
+            --hidden-import "serial" \
             src/steps_ide/main.py
 
 echo "🔨 Building Steps Interpreter..."
@@ -62,6 +63,7 @@ pyinstaller --name="steps" \
             --hidden-import "steps_repl.repl" \
             --hidden-import "steps_repl.commands" \
             --hidden-import "steps_repl.environment" \
+            --hidden-import "serial" \
             src/steps/main.py
 
 echo "✅ Build complete!"
