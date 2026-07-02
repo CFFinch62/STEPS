@@ -1,6 +1,6 @@
 step: draw_display
     belongs to: rendering
-    expects: data, nmea_log, mode, paused
+    expects: data, nmea_log, mode, paused, serial_port, serial_baud
     returns: done
 
     note: Render the full TUI instrument display.
@@ -68,7 +68,7 @@ step: draw_display
         if mode equals "SIM"
             set status_line to status_line added to "  |  Simulated data"
         otherwise
-            set status_line to status_line added to "  |  LIVE serial"
+            set status_line to status_line added to "  |  LIVE " added to serial_port added to " @ " added to (serial_baud as text)
         set status_line to status_line added to "  |  SRC: " added to data["pos_src"]
         indicate status_line
 
@@ -140,7 +140,7 @@ step: draw_display
         indicate stat_sep
         call move_cursor with 29, 2
         call set_color with 100, 155, 220
-        indicate "[s] SIM/LIVE  [p] pause  [c] clear  [q] quit"
+        indicate "[s] SIM/LIVE  [p] pause  [c] clear  [x] settings  [q] quit"
         call move_cursor with 29, 60
         call set_color with 180, 200, 255
         indicate mode

@@ -1,0 +1,144 @@
+step: show_settings
+    belongs to: settings
+    expects: serial_port, serial_baud, serial_data_bits, serial_stop_bits
+    returns: result
+
+    note: Show a settings overlay screen for serial port configuration.
+    note: Returns a table with updated settings values.
+    note: result["port"] = the (possibly edited) port string
+    note: result["baud"] = the (possibly changed) baud rate
+    note: result["done"] = true when the user closes the screen
+
+    do:
+        note: ── Build the list of common baud rates ──
+        set baud_rates to [4800, 9600, 19200, 38400, 57600, 115200]
+
+        note: ── Working copies of settings ──
+        set cur_port to serial_port
+        set cur_baud to serial_baud
+
+        note: ── Settings loop ──
+        set done to false
+        repeat while not done
+            note: ── Draw settings panel ──
+            clear console
+
+            note: Title
+            call move_cursor with 1, 1
+            call set_color with 255, 210, 55
+            call banner with "STEPS INSTRUMENTS", 78 storing result in title_banner
+            indicate title_banner
+
+            call move_cursor with 5, 1
+            call set_color with 45, 85, 148
+            call repeat_text with "─", 78 storing result in sep
+            indicate sep
+
+            note: Settings header
+            call move_cursor with 7, 5
+            call set_color with 255, 210, 55
+            indicate "╔══════════════════════════════════════════════════════════════════════╗"
+            call move_cursor with 8, 5
+            call set_color with 255, 210, 55
+            indicate "║                      SERIAL PORT SETTINGS                          ║"
+            call move_cursor with 9, 5
+            call set_color with 255, 210, 55
+            indicate "╚══════════════════════════════════════════════════════════════════════╝"
+
+            note: Port
+            call move_cursor with 11, 8
+            call set_color with 100, 155, 220
+            indicate "Port:"
+            call move_cursor with 11, 22
+            call set_color with 80, 230, 180
+            indicate cur_port
+
+            note: Baud Rate
+            call move_cursor with 13, 8
+            call set_color with 100, 155, 220
+            indicate "Baud Rate:"
+            call move_cursor with 13, 22
+            call set_color with 80, 230, 180
+            indicate cur_baud as text
+
+            note: Data Bits (display only)
+            call move_cursor with 15, 8
+            call set_color with 100, 155, 220
+            indicate "Data Bits:"
+            call move_cursor with 15, 22
+            call set_color with 140, 155, 170
+            indicate serial_data_bits as text
+            call move_cursor with 15, 26
+            call set_color with 90, 100, 110
+            indicate "(fixed — NMEA standard)"
+
+            note: Stop Bits (display only)
+            call move_cursor with 17, 8
+            call set_color with 100, 155, 220
+            indicate "Stop Bits:"
+            call move_cursor with 17, 22
+            call set_color with 140, 155, 170
+            indicate serial_stop_bits as text
+            call move_cursor with 17, 26
+            call set_color with 90, 100, 110
+            indicate "(fixed — NMEA standard)"
+
+            note: Separator
+            call move_cursor with 19, 5
+            call set_color with 45, 85, 148
+            call repeat_text with "─", 70 storing result in sep2
+            indicate sep2
+
+            note: Key hints
+            call move_cursor with 21, 8
+            call set_color with 100, 155, 220
+            indicate "[p] edit port    [b] cycle baud rate    [x] close settings"
+
+            note: Reset color
+            call reset_color
+
+            note: ── Wait for key press ──
+            call poll_key storing result in settings_key
+
+            if settings_key equals "p"
+                note: Edit port — temporarily restore terminal for input
+                call move_cursor with 23, 8
+                call set_color with 255, 210, 55
+                indicate "Enter port (e.g. /dev/ttyUSB0): "
+                call show_cursor
+                call restore_terminal
+                set cur_port to input
+                call hide_cursor
+                clear console
+
+            otherwise if settings_key equals "b"
+                note: Cycle to the next baud rate
+                set found_idx to -1
+                set idx to 0
+                repeat for each rate in baud_rates
+                    if rate equals cur_baud
+                        set found_idx to idx
+                    set idx to idx + 1
+                if found_idx is greater than or equal to 0
+                    set next_idx to (found_idx + 1) % length of baud_rates
+                    set cur_baud to baud_rates[next_idx]
+                otherwise
+                    note: Current baud not in list, reset to 4800
+                    set cur_baud to 4800
+
+            otherwise if settings_key equals "x"
+                set done to true
+
+            otherwise if settings_key equals "q"
+                note: Allow quit from settings screen too
+                set done to true
+
+            note: Pace the loop
+            call sleep with 0.15
+
+        note: ── Build return table ──
+        set result to [:]
+        set result["port"] to cur_port
+        set result["baud"] to cur_baud
+        set result["done"] to true
+        return result

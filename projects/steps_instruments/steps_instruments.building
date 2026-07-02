@@ -17,6 +17,8 @@ building: steps_instruments
             step: sim_generate
         floor: rendering
             step: draw_display
+        floor: settings
+            step: show_settings
 
     note: ── Initialize instrument data table ──
     set data to [:]
@@ -38,6 +40,11 @@ building: steps_instruments
     set paused to false
     set sim_tick to 0
     set serial_handle to -1
+    note: ── Serial port settings ──
+    set serial_port to "/dev/ttyUSB0"
+    set serial_baud to 4800
+    set serial_data_bits to 8
+    set serial_stop_bits to 1
     note: ── Prepare terminal for TUI ──
     call hide_cursor
     note: ── Main loop ──
@@ -66,7 +73,7 @@ building: steps_instruments
                         set oldest to nmea_log[0]
                         remove oldest from nmea_log
         note: ── Draw the display ──
-        call draw_display with data, nmea_log, mode, paused
+        call draw_display with data, nmea_log, mode, paused, serial_port, serial_baud
         note: ── Handle keyboard input ──
         call poll_key storing result in key_press
         if key_press equals "q"
@@ -83,11 +90,15 @@ building: steps_instruments
             note: Toggle SIM / LIVE mode
             if mode equals "SIM"
                 set mode to "LIVE"
+                note: Open serial port with configured settings
+                call serial_open with serial_port, serial_baud storing result in serial_handle
+                clear console
             otherwise
                 if serial_handle is greater than or equal to 0
                     call serial_close with serial_handle
                     set serial_handle to -1
                 set mode to "SIM"
+                clear console
         otherwise if key_press equals "p"
             note: Toggle pause
             if paused
@@ -108,6 +119,16 @@ building: steps_instruments
             set data["wind_spd"] to "---"
             set data["pos_src"] to "---"
             set nmea_log to []
+            clear console
+        otherwise if key_press equals "x"
+            note: Open settings screen
+            if serial_handle is greater than or equal to 0
+                call serial_close with serial_handle
+                set serial_handle to -1
+            set mode to "SIM"
+            call show_settings with serial_port, serial_baud, serial_data_bits, serial_stop_bits storing result in settings_result
+            set serial_port to settings_result["port"]
+            set serial_baud to settings_result["baud"]
             clear console
         note: ── Pace the loop ──
         call sleep with 0.2

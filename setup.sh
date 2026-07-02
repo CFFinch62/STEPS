@@ -35,6 +35,10 @@ pip install -e .
 echo "📥 Installing IDE dependencies (PyQt6, PyQt6-WebEngine)..."
 pip install PyQt6 PyQt6-WebEngine
 
+# Install serial port support
+echo "📥 Installing serial port support (pyserial)..."
+pip install pyserial
+
 # Install development dependencies (optional)
 read -p "Install development dependencies (pytest, mypy, black, isort)? [y/N] " -n 1 -r
 echo
